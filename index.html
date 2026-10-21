@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JAAJA-BOT PRO - OTC Edition</title>
+    <title>JAAJA-BOT PRO - Expanded OTC Pairs</title>
     <style>
         * {
             box-sizing: border-box;
@@ -240,11 +240,11 @@
 
 <div class="card">
     <h2>JAAJA-BOT PRO</h2>
-    <p class="subtitle">OTC High-Yield Engine</p>
+    <p class="subtitle">Multi-Asset OTC Signal Engine</p>
 
-    <!-- OTC Only Pair Selection -->
+    <!-- Expanded OTC Pair Selection -->
     <div class="form-group">
-        <label>Select OTC Pair (Lacagaha OTC-da ah):</label>
+        <label>Select OTC Pair (Dooro Lacagta):</label>
         <select id="asset">
             <option value="EUR/USD (OTC)">EUR/USD (OTC)</option>
             <option value="GBP/USD (OTC)">GBP/USD (OTC)</option>
@@ -252,6 +252,11 @@
             <option value="AUD/USD (OTC)">AUD/USD (OTC)</option>
             <option value="USD/CAD (OTC)">USD/CAD (OTC)</option>
             <option value="USD/CHF (OTC)">USD/CHF (OTC)</option>
+            <option value="NZD/USD (OTC)">NZD/USD (OTC)</option>
+            <option value="EUR/GBP (OTC)">EUR/GBP (OTC)</option>
+            <option value="EUR/JPY (OTC)">EUR/JPY (OTC)</option>
+            <option value="GBP/JPY (OTC)">GBP/JPY (OTC)</option>
+            <option value="BTC/USD (Crypto)">BTC/USD (Crypto)</option>
         </select>
     </div>
 
@@ -292,7 +297,7 @@
     <!-- Price & Confidence -->
     <div class="grid-2">
         <div class="box green">
-            <div class="box-title">$ OTC Price</div>
+            <div class="box-title">$ Current Price</div>
             <div class="box-value" id="currentPrice">1.13730</div>
         </div>
         <div class="box">
@@ -303,7 +308,7 @@
 
     <!-- Indicator Votes Section -->
     <div class="votes-container">
-        <div class="votes-header">OTC Indicator Alignment</div>
+        <div class="votes-header">Smart Indicator Alignment</div>
         <div class="votes-grid" id="votesGrid">
             <div class="vote-item"><span>EMA Trend</span><span class="vote-status status-neutral">-</span></div>
             <div class="vote-item"><span>RSI Momentum</span><span class="vote-status status-neutral">-</span></div>
@@ -329,7 +334,7 @@
 
     <!-- Signal History Log -->
     <div class="history-container">
-        <div class="votes-header">OTC Signal History</div>
+        <div class="votes-header">Recent Signal History</div>
         <div class="history-list" id="historyList">
             <div style="font-size: 10px; color: #64748b; text-align: center;">No signals generated yet</div>
         </div>
@@ -392,7 +397,6 @@
             const timeframeVal = document.getElementById("timeframe").value;
             document.getElementById("durationText").innerText = timeframeVal + " Minute";
 
-            // OTC Base Price Range
             const basePrice = (Math.random() * (1.13900 - 1.13500) + 1.13500).toFixed(5);
             document.getElementById("currentPrice").innerText = basePrice;
 
