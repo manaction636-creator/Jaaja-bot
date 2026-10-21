@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JAAJA-BOT | Professional Trading Dashboard</title>
+    <style>
+        body {
+            background-color: #0b0e14;
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .card {
+            background: #151a23;m
+            border: 1px solid #222b3b;
+            border-radius: 16px;
+            padding: 30px;
+            width: 360px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            text-align: center;
+        }
+        h2 {
+            margin-top: 0;
+            color: #00e676;
+            letter-spacing: 1px;
+        }
+        .signal-box {
+            font-size: 32px;
+            font-weight: bold;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            background: #1c2431;
+            color: #00e676;
+            border: 2px solid #00e676;
+        }
+        .info {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            color: #a0aec0;
+        }
+        .btn {
+            background: #00e676;
+            color: #000;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>JAAJA-BOT PRO</h2>
+    <p style="color: #718096; font-size: 14px;">Market Signal Analysis</p>
+    
+    <div class="signal-box" id="signal">CALL ⬆</div>
+    
+    <div class="info">
+        <span>Confidence:</span>
+        <strong id="confidence" style="color: #fff;">85%</strong>
+    </div>
+    <div class="info">
+        <span>Indicators:</span>
+        <strong style="color: #fff;">RSI, MACD, EMA</strong>
+    </div>
+
+    <button class="btn" onclick="alert('Updating Signal...')">GET NEXT SIGNAL</button>
+</div>
+
+</body>
+</html>
