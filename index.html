@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JAAJA-BOT PRO - Ultimate Engine</title>
+    <title>JAAJA-BOT PRO - OTC Edition</title>
     <style>
         * {
             box-sizing: border-box;
@@ -114,7 +114,6 @@
         .badge-up { color: #00e676; background: rgba(0, 230, 118, 0.15); }
         .badge-down { color: #ff5252; background: rgba(255, 82, 82, 0.15); }
 
-        /* Timer Section */
         .timer-container {
             background: #171f2d;
             border-radius: 12px;
@@ -194,7 +193,6 @@
             font-weight: bold;
         }
 
-        /* History Section */
         .history-container {
             background: #171f2d;
             border-radius: 12px;
@@ -242,17 +240,18 @@
 
 <div class="card">
     <h2>JAAJA-BOT PRO</h2>
-    <p class="subtitle">Ultimate AI Signal Engine & Auto Scanner</p>
+    <p class="subtitle">OTC High-Yield Engine</p>
 
-    <!-- Pair Selection -->
+    <!-- OTC Only Pair Selection -->
     <div class="form-group">
-        <label>Select Pair (Dooro Lacagta):</label>
+        <label>Select OTC Pair (Lacagaha OTC-da ah):</label>
         <select id="asset">
-            <option value="EUR/USD">EUR/USD (OTC)</option>
-            <option value="GBP/USD">GBP/USD (OTC)</option>
-            <option value="USD/JPY">USD/JPY (OTC)</option>
-            <option value="AUD/USD">AUD/USD (OTC)</option>
-            <option value="BTC/USD">BTC/USD (Crypto)</option>
+            <option value="EUR/USD (OTC)">EUR/USD (OTC)</option>
+            <option value="GBP/USD (OTC)">GBP/USD (OTC)</option>
+            <option value="USD/JPY (OTC)">USD/JPY (OTC)</option>
+            <option value="AUD/USD (OTC)">AUD/USD (OTC)</option>
+            <option value="USD/CAD (OTC)">USD/CAD (OTC)</option>
+            <option value="USD/CHF (OTC)">USD/CHF (OTC)</option>
         </select>
     </div>
 
@@ -268,7 +267,7 @@
 
     <!-- Live Auto Detected Trend -->
     <div class="trend-card">
-        <span class="trend-title">Detected Live Trend:</span>
+        <span class="trend-title">Detected OTC Trend:</span>
         <span class="trend-badge badge-up" id="detectedTrend">SCANNING...</span>
     </div>
 
@@ -293,8 +292,8 @@
     <!-- Price & Confidence -->
     <div class="grid-2">
         <div class="box green">
-            <div class="box-title">$ Current Price</div>
-            <div class="box-value" id="currentPrice">1.12526</div>
+            <div class="box-title">$ OTC Price</div>
+            <div class="box-value" id="currentPrice">1.13730</div>
         </div>
         <div class="box">
             <div class="box-title">Trend Strength</div>
@@ -304,7 +303,7 @@
 
     <!-- Indicator Votes Section -->
     <div class="votes-container">
-        <div class="votes-header">Smart Indicator Alignment</div>
+        <div class="votes-header">OTC Indicator Alignment</div>
         <div class="votes-grid" id="votesGrid">
             <div class="vote-item"><span>EMA Trend</span><span class="vote-status status-neutral">-</span></div>
             <div class="vote-item"><span>RSI Momentum</span><span class="vote-status status-neutral">-</span></div>
@@ -330,17 +329,16 @@
 
     <!-- Signal History Log -->
     <div class="history-container">
-        <div class="votes-header">Recent Signal History</div>
+        <div class="votes-header">OTC Signal History</div>
         <div class="history-list" id="historyList">
             <div style="font-size: 10px; color: #64748b; text-align: center;">No signals generated yet</div>
         </div>
     </div>
 
-    <button class="btn" id="analyzeBtn" onclick="generateAutoTrendSignal()">AUTO-SCAN & GENERATE SIGNAL</button>
+    <button class="btn" id="analyzeBtn" onclick="generateAutoTrendSignal()">AUTO-SCAN OTC SIGNAL</button>
 </div>
 
 <script>
-    // Live Candle Countdown Timer
     setInterval(() => {
         const now = new Date();
         const seconds = 60 - now.getSeconds();
@@ -348,7 +346,6 @@
         document.getElementById("candleTimer").innerText = "00:" + formatted;
     }, 1000);
 
-    // Audio Sound Effects Generator
     function playAudioBeep(type) {
         try {
             const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -367,14 +364,14 @@
             osc.start();
             osc.stop(ctx.currentTime + 0.3);
         } catch (e) {
-            console.log("Audio play blocked by browser interaction rules");
+            console.log("Audio play blocked");
         }
     }
 
     function generateAutoTrendSignal() {
         const btn = document.getElementById("analyzeBtn");
         btn.disabled = true;
-        btn.innerText = "SCANNING LIVE MARKET TREND...";
+        btn.innerText = "SCANNING OTC MARKET...";
 
         setTimeout(() => {
             const now = new Date();
@@ -385,20 +382,21 @@
 
             const trendBadge = document.getElementById("detectedTrend");
             if (isUptrend) {
-                trendBadge.innerText = "🟢 UPTREND DETECTED";
+                trendBadge.innerText = "🟢 OTC UPTREND";
                 trendBadge.className = "trend-badge badge-up";
             } else {
-                trendBadge.innerText = "🔴 DOWNTREND DETECTED";
+                trendBadge.innerText = "🔴 OTC DOWNTREND";
                 trendBadge.className = "trend-badge badge-down";
             }
 
             const timeframeVal = document.getElementById("timeframe").value;
             document.getElementById("durationText").innerText = timeframeVal + " Minute";
 
-            const basePrice = (Math.random() * (1.13000 - 1.12000) + 1.12000).toFixed(5);
+            // OTC Base Price Range
+            const basePrice = (Math.random() * (1.13900 - 1.13500) + 1.13500).toFixed(5);
             document.getElementById("currentPrice").innerText = basePrice;
 
-            const strength = (Math.random() * (99 - 94) + 94).toFixed(0);
+            const strength = (Math.random() * (99 - 95) + 95).toFixed(0);
             document.getElementById("confidenceText").innerText = strength + "%";
 
             let callVotes = 0;
@@ -447,7 +445,6 @@
                 playAudioBeep('PUT');
             }
 
-            // Append to History Log
             const historyList = document.getElementById("historyList");
             const timeString = now.getHours() + ":" + (now.getMinutes()<10?'0':'') + now.getMinutes();
             const newHistory = `<div class="history-item">
@@ -462,7 +459,7 @@
             }
 
             btn.disabled = false;
-            btn.innerText = "AUTO-SCAN & GENERATE SIGNAL";
+            btn.innerText = "AUTO-SCAN OTC SIGNAL";
         }, 1500);
     }
 </script>
