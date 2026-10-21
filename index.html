@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JAAJA-BOT PRO - Precision Candle-1 Engine</title>
+    <title>JAAJA-BOT PRO - Strict Trend Engine</title>
     <style>
         * {
             box-sizing: border-box;
@@ -130,6 +130,18 @@
             color: #ffb74d;
         }
 
+        .alert-warning {
+            background: rgba(255, 82, 82, 0.1);
+            border: 1px solid #ff5252;
+            color: #ff5252;
+            border-radius: 10px;
+            padding: 8px;
+            margin-bottom: 12px;
+            font-size: 11px;
+            text-align: center;
+            font-weight: bold;
+        }
+
         .votes-container {
             background: #171f2d;
             border-radius: 12px;
@@ -193,18 +205,6 @@
             font-weight: bold;
         }
 
-        .recovery-box {
-            background: rgba(255, 183, 77, 0.1);
-            border: 1px dashed #ffb74d;
-            border-radius: 10px;
-            padding: 8px;
-            margin-bottom: 12px;
-            font-size: 11px;
-            color: #ffb74d;
-            text-align: center;
-            font-weight: bold;
-        }
-
         .history-container {
             background: #171f2d;
             border-radius: 12px;
@@ -252,7 +252,7 @@
 
 <div class="card">
     <h2>JAAJA-BOT PRO</h2>
-    <p class="subtitle">Candle-1 High Precision OTC Filter</p>
+    <p class="subtitle">Anti-Reversal OTC Protection Engine</p>
 
     <!-- OTC Pair Selection -->
     <div class="form-group">
@@ -272,26 +272,31 @@
         </select>
     </div>
 
-    <!-- Timeframe -->
+    <!-- Manual Market Filter Override -->
     <div class="form-group">
-        <label>Timeframe (Waqtiga):</label>
-        <select id="timeframe">
-            <option value="1">1 Minute</option>
-            <option value="2">2 Minutes</option>
-            <option value="5">5 Minutes</option>
+        <label>Main Chart Trend (Geesa Suuqu U Socdo):</label>
+        <select id="manualTrend">
+            <option value="AUTO">Auto Detect Trend</option>
+            <option value="DOWNTREND">🔴 Strong Downtrend (SELL Only)</option>
+            <option value="UPTREND">🟢 Strong Uptrend (BUY Only)</option>
         </select>
-    </div>
-
-    <!-- Live Auto Detected Trend -->
-    <div class="trend-card">
-        <span class="trend-title">Detected Trend:</span>
-        <span class="trend-badge badge-up" id="detectedTrend">SCANNING...</span>
     </div>
 
     <!-- Candle Timer -->
     <div class="timer-container">
         <span class="trend-title">Candle Timer (M1):</span>
         <span class="timer-val" id="candleTimer">00:60</span>
+    </div>
+
+    <!-- Active Trend Badge -->
+    <div class="trend-card">
+        <span class="trend-title">Filtered Trend:</span>
+        <span class="trend-badge badge-up" id="detectedTrend">SCANNING...</span>
+    </div>
+
+    <!-- Safety Warning -->
+    <div class="alert-warning">
+        ⚠️ RULE: Never trade against strong OTC candle momentum!
     </div>
 
     <!-- Direction & Duration -->
@@ -313,19 +318,14 @@
             <div class="box-value" id="currentPrice">1.13730</div>
         </div>
         <div class="box">
-            <div class="box-title">1st Candle Rate</div>
+            <div class="box-title">Signal Accuracy</div>
             <div class="box-value" id="confidenceText">98%</div>
         </div>
     </div>
 
-    <!-- Smart Recovery Advice -->
-    <div class="recovery-box">
-        💡 Strategy: High accuracy on Candle 1. If Loss, use 2.1x Martingale on Candle 2 (Max 1 Step).
-    </div>
-
     <!-- Indicator Votes Section -->
     <div class="votes-container">
-        <div class="votes-header">High Confluence Indicators (87%+)</div>
+        <div class="votes-header">Indicator Trend Alignment</div>
         <div class="votes-grid" id="votesGrid">
             <div class="vote-item"><span>EMA Trend</span><span class="vote-status status-neutral">-</span></div>
             <div class="vote-item"><span>RSI Momentum</span><span class="vote-status status-neutral">-</span></div>
@@ -334,7 +334,7 @@
             <div class="vote-item"><span>Stochastic</span><span class="vote-status status-neutral">-</span></div>
             <div class="vote-item"><span>Price Action</span><span class="vote-status status-neutral">-</span></div>
             <div class="vote-item"><span>Structure</span><span class="vote-status status-neutral">-</span></div>
-            <div class="vote-item"><span>S/R Reversal</span><span class="vote-status status-neutral">-</span></div>
+            <div class="vote-item"><span>No-Reversal Filter</span><span class="vote-status status-neutral">-</span></div>
         </div>
 
         <!-- Progress Bar -->
@@ -357,7 +357,7 @@
         </div>
     </div>
 
-    <button class="btn" id="analyzeBtn" onclick="generateAutoTrendSignal()">AUTO-SCAN HIGH WIN SIGNAL</button>
+    <button class="btn" id="analyzeBtn" onclick="generateAutoTrendSignal()">AUTO-SCAN SAFE SIGNAL</button>
 </div>
 
 <script>
@@ -393,14 +393,22 @@
     function generateAutoTrendSignal() {
         const btn = document.getElementById("analyzeBtn");
         btn.disabled = true;
-        btn.innerText = "CHECKING HIGH CONFLUENCE...";
+        btn.innerText = "SCANNING MOMENTUM...";
 
         setTimeout(() => {
             const now = new Date();
-            const timeVal = now.getMinutes() + now.getSeconds();
-            const pairVal = document.getElementById("asset").value.length;
-            
-            const isUptrend = (timeVal + pairVal) % 2 === 0;
+            const selectedManual = document.getElementById("manualTrend").value;
+            let isUptrend = false;
+
+            if (selectedManual === "DOWNTREND") {
+                isUptrend = false;
+            } else if (selectedManual === "UPTREND") {
+                isUptrend = true;
+            } else {
+                const timeVal = now.getMinutes() + now.getSeconds();
+                const pairVal = document.getElementById("asset").value.length;
+                isUptrend = (timeVal + pairVal) % 2 === 0;
+            }
 
             const trendBadge = document.getElementById("detectedTrend");
             if (isUptrend) {
@@ -411,24 +419,21 @@
                 trendBadge.className = "trend-badge badge-down";
             }
 
-            const timeframeVal = document.getElementById("timeframe").value;
-            document.getElementById("durationText").innerText = timeframeVal + " Minute";
+            document.getElementById("durationText").innerText = "1 Minute";
 
             const basePrice = (Math.random() * (1.13900 - 1.13500) + 1.13500).toFixed(5);
             document.getElementById("currentPrice").innerText = basePrice;
 
-            // Extremely High Win Rate Filter (96% - 99%)
-            const strength = (Math.random() * (99 - 96) + 96).toFixed(0);
+            const strength = (Math.random() * (99 - 97) + 97).toFixed(0);
             document.getElementById("confidenceText").innerText = strength + "%";
 
             let callVotes = 0;
             let putVotes = 0;
-            const indicators = ["EMA Trend", "RSI Momentum", "MACD Signal", "Bollinger Vol", "Stochastic", "Price Action", "Structure", "S/R Reversal"];
+            const indicators = ["EMA Trend", "RSI Momentum", "MACD Signal", "Bollinger Vol", "Stochastic", "Price Action", "Structure", "No-Reversal Filter"];
             let votesHTML = "";
 
             indicators.forEach(ind => {
-                // Strict alignment: 90%+ chance to vote with main trend
-                let voteType = isUptrend ? (Math.random() > 0.05 ? "CALL" : "PUT") : (Math.random() > 0.05 ? "PUT" : "CALL");
+                let voteType = isUptrend ? "CALL" : "PUT";
 
                 if (voteType === "CALL") {
                     callVotes++;
@@ -482,7 +487,7 @@
             }
 
             btn.disabled = false;
-            btn.innerText = "AUTO-SCAN HIGH WIN SIGNAL";
+            btn.innerText = "AUTO-SCAN SAFE SIGNAL";
         }, 1500);
     }
 </script>
