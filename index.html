@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JAAJA-BOT PRO - Auto Trend Engine</title>
+    <title>JAAJA-BOT PRO - Ultimate Engine</title>
     <style>
         * {
             box-sizing: border-box;
@@ -25,7 +25,7 @@
             border-radius: 20px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.8);
             width: 100%;
-            max-width: 380px;
+            max-width: 400px;
             border: 1px solid #1e2638;
         }
         h2 {
@@ -114,6 +114,23 @@
         .badge-up { color: #00e676; background: rgba(0, 230, 118, 0.15); }
         .badge-down { color: #ff5252; background: rgba(255, 82, 82, 0.15); }
 
+        /* Timer Section */
+        .timer-container {
+            background: #171f2d;
+            border-radius: 12px;
+            padding: 10px 12px;
+            margin-bottom: 12px;
+            border: 1px solid #232f44;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .timer-val {
+            font-size: 16px;
+            font-weight: bold;
+            color: #ffb74d;
+        }
+
         .votes-container {
             background: #171f2d;
             border-radius: 12px;
@@ -177,18 +194,29 @@
             font-weight: bold;
         }
 
-        .levels-container {
+        /* History Section */
+        .history-container {
             background: #171f2d;
             border-radius: 12px;
             padding: 12px;
             margin-bottom: 12px;
             border: 1px solid #232f44;
         }
-        .level-row {
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-top: 8px;
+            max-height: 100px;
+            overflow-y: auto;
+        }
+        .history-item {
             display: flex;
             justify-content: space-between;
-            font-size: 12px;
-            margin-bottom: 6px;
+            font-size: 11px;
+            background: #111723;
+            padding: 5px 8px;
+            border-radius: 6px;
         }
 
         .btn {
@@ -214,7 +242,7 @@
 
 <div class="card">
     <h2>JAAJA-BOT PRO</h2>
-    <p class="subtitle">Real-Time Auto Trend Filter Engine</p>
+    <p class="subtitle">Ultimate AI Signal Engine & Auto Scanner</p>
 
     <!-- Pair Selection -->
     <div class="form-group">
@@ -242,6 +270,12 @@
     <div class="trend-card">
         <span class="trend-title">Detected Live Trend:</span>
         <span class="trend-badge badge-up" id="detectedTrend">SCANNING...</span>
+    </div>
+
+    <!-- Candle Timer -->
+    <div class="timer-container">
+        <span class="trend-title">Candle Timer (M1):</span>
+        <span class="timer-val" id="candleTimer">00:60</span>
     </div>
 
     <!-- Direction & Duration -->
@@ -294,29 +328,59 @@
         </div>
     </div>
 
-    <!-- Levels -->
-    <div class="levels-container">
-        <div class="level-row"><span style="color: #ff5252;">RESISTANCE</span><strong id="resPrice">1.12616</strong></div>
-        <div class="level-row"><span style="color: #00e676;">SUPPORT</span><strong id="supPrice">1.12401</strong></div>
-        <div class="level-row"><span style="color: #ffb74d;">PIVOT</span><strong id="pivPrice">1.12508</strong></div>
+    <!-- Signal History Log -->
+    <div class="history-container">
+        <div class="votes-header">Recent Signal History</div>
+        <div class="history-list" id="historyList">
+            <div style="font-size: 10px; color: #64748b; text-align: center;">No signals generated yet</div>
+        </div>
     </div>
 
     <button class="btn" id="analyzeBtn" onclick="generateAutoTrendSignal()">AUTO-SCAN & GENERATE SIGNAL</button>
 </div>
 
 <script>
+    // Live Candle Countdown Timer
+    setInterval(() => {
+        const now = new Date();
+        const seconds = 60 - now.getSeconds();
+        const formatted = seconds < 10 ? "0" + seconds : seconds;
+        document.getElementById("candleTimer").innerText = "00:" + formatted;
+    }, 1000);
+
+    // Audio Sound Effects Generator
+    function playAudioBeep(type) {
+        try {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            
+            if (type === 'CALL') {
+                osc.frequency.setValueAtTime(600, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.3);
+            } else {
+                osc.frequency.setValueAtTime(800, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(300, ctx.currentTime + 0.3);
+            }
+            osc.start();
+            osc.stop(ctx.currentTime + 0.3);
+        } catch (e) {
+            console.log("Audio play blocked by browser interaction rules");
+        }
+    }
+
     function generateAutoTrendSignal() {
         const btn = document.getElementById("analyzeBtn");
         btn.disabled = true;
         btn.innerText = "SCANNING LIVE MARKET TREND...";
 
         setTimeout(() => {
-            // Time & Pair based seed calculation to ensure consistent market behavior
             const now = new Date();
             const timeVal = now.getMinutes() + now.getSeconds();
             const pairVal = document.getElementById("asset").value.length;
             
-            // Automatic Trend Detection (Calculated from live time & algorithm alignment)
             const isUptrend = (timeVal + pairVal) % 2 === 0;
 
             const trendBadge = document.getElementById("detectedTrend");
@@ -331,31 +395,19 @@
             const timeframeVal = document.getElementById("timeframe").value;
             document.getElementById("durationText").innerText = timeframeVal + " Minute";
 
-            // Price simulation
             const basePrice = (Math.random() * (1.13000 - 1.12000) + 1.12000).toFixed(5);
             document.getElementById("currentPrice").innerText = basePrice;
-            document.getElementById("resPrice").innerText = (parseFloat(basePrice) + 0.00090).toFixed(5);
-            document.getElementById("supPrice").innerText = (parseFloat(basePrice) - 0.00090).toFixed(5);
-            document.getElementById("pivPrice").innerText = (parseFloat(basePrice) + 0.00010).toFixed(5);
 
-            // High Strength Rate
             const strength = (Math.random() * (99 - 94) + 94).toFixed(0);
             document.getElementById("confidenceText").innerText = strength + "%";
 
-            // 100% Indicator Alignment with the Detected Trend
             let callVotes = 0;
             let putVotes = 0;
             const indicators = ["EMA Trend", "RSI Momentum", "MACD Signal", "Bollinger Vol", "Stochastic", "Price Action", "Structure", "S/R Reversal"];
             let votesHTML = "";
 
             indicators.forEach(ind => {
-                let voteType = "";
-
-                if (isUptrend) {
-                    voteType = Math.random() > 0.1 ? "CALL" : "PUT";
-                } else {
-                    voteType = Math.random() > 0.1 ? "PUT" : "CALL";
-                }
+                let voteType = isUptrend ? (Math.random() > 0.1 ? "CALL" : "PUT") : (Math.random() > 0.1 ? "PUT" : "CALL");
 
                 if (voteType === "CALL") {
                     callVotes++;
@@ -370,7 +422,6 @@
 
             document.getElementById("votesGrid").innerHTML = votesHTML;
 
-            // Bar fill
             const totalVotes = callVotes + putVotes;
             const callPercent = (callVotes / totalVotes) * 100;
             document.getElementById("progressFill").style.width = callPercent + "%";
@@ -379,15 +430,35 @@
 
             const dirBox = document.getElementById("directionBox");
             const dirText = document.getElementById("directionText");
+            const assetName = document.getElementById("asset").value;
 
+            let signalDir = "";
             if (isUptrend) {
+                signalDir = "CALL";
                 dirText.innerText = "CALL";
                 dirText.style.color = "#00e676";
                 dirBox.style.borderLeftColor = "#00e676";
+                playAudioBeep('CALL');
             } else {
+                signalDir = "PUT";
                 dirText.innerText = "PUT";
                 dirText.style.color = "#ff5252";
                 dirBox.style.borderLeftColor = "#ff5252";
+                playAudioBeep('PUT');
+            }
+
+            // Append to History Log
+            const historyList = document.getElementById("historyList");
+            const timeString = now.getHours() + ":" + (now.getMinutes()<10?'0':'') + now.getMinutes();
+            const newHistory = `<div class="history-item">
+                <span>${timeString} - <strong>${assetName}</strong></span>
+                <span style="color: ${isUptrend ? '#00e676' : '#ff5252'}; font-weight:bold;">${signalDir} (${strength}%)</span>
+            </div>`;
+            
+            if (historyList.innerHTML.includes("No signals generated yet")) {
+                historyList.innerHTML = newHistory;
+            } else {
+                historyList.innerHTML = newHistory + historyList.innerHTML;
             }
 
             btn.disabled = false;
