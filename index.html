@@ -5,84 +5,188 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JAAJA-BOT PRO</title>
     <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+        }
         body {
-            background-color: #0b0e14;
+            background-color: #0b0d12;
             color: #ffffff;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             margin: 0;
+            padding: 15px;
         }
         .card {
-            background-color: #151d28;
-            padding: 25px;
-            border-radius: 16px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
-            width: 320px;
-            text-align: center;
+            background-color: #121620;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            width: 100%;
+            max-width: 380px;
+            border: 1px solid #1e2638;
         }
         h2 {
             color: #00e676;
-            margin-bottom: 5px;
+            text-align: center;
+            margin: 0 0 5px 0;
+            font-size: 22px;
+            letter-spacing: 1px;
         }
         p.subtitle {
             color: #8a99ad;
-            font-size: 13px;
-            margin-bottom: 20px;
+            font-size: 12px;
+            text-align: center;
+            margin: 0 0 15px 0;
         }
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             text-align: left;
         }
         label {
-            font-size: 12px;
+            font-size: 11px;
             color: #8a99ad;
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
+            text-transform: uppercase;
         }
         select {
             width: 100%;
             padding: 10px;
-            background-color: #1e293b;
+            background-color: #1a2232;
             color: #ffffff;
-            border: 1px solid #334155;
-            border-radius: 8px;
-            font-size: 14px;
+            border: 1px solid #2e3c54;
+            border-radius: 10px;
+            font-size: 13px;
             outline: none;
         }
-        .signal-box {
-            border: 2px solid #00e676;
-            color: #00e676;
-            padding: 15px;
-            border-radius: 10px;
-            font-size: 24px;
-            font-weight: bold;
-            margin: 20px 0;
-            background: rgba(0, 230, 118, 0.05);
+        
+        /* Grid Boxes */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 12px;
         }
-        .info-row {
+        .box {
+            background: #171f2d;
+            border-radius: 12px;
+            padding: 10px 12px;
+            position: relative;
+            border-left: 3px solid #ffb74d;
+        }
+        .box.green { border-left-color: #00e676; }
+        .box.red { border-left-color: #ff5252; }
+        .box-title {
+            font-size: 10px;
+            color: #8a99ad;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .box-value {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 4px;
+        }
+
+        /* Votes Section */
+        .votes-container {
+            background: #171f2d;
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 12px;
+            border: 1px solid #232f44;
+        }
+        .votes-header {
+            font-size: 11px;
+            color: #8a99ad;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            text-align: left;
+            font-weight: bold;
+        }
+        .votes-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+        .vote-item {
+            background: #111723;
+            padding: 6px 10px;
+            border-radius: 8px;
             display: flex;
             justify-content: space-between;
-            font-size: 14px;
-            color: #cbd5e1;
-            margin-bottom: 8px;
+            align-items: center;
+            font-size: 11px;
         }
+        .vote-status {
+            font-weight: bold;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        .status-call { color: #00e676; background: rgba(0, 230, 118, 0.1); }
+        .status-put { color: #ff5252; background: rgba(255, 82, 82, 0.1); }
+        .status-neutral { color: #ffb74d; background: rgba(255, 183, 77, 0.1); }
+
+        /* Progress Bar */
+        .progress-wrapper {
+            margin-top: 10px;
+        }
+        .progress-bar {
+            height: 6px;
+            background: #ff5252;
+            border-radius: 4px;
+            overflow: hidden;
+            display: flex;
+        }
+        .progress-fill {
+            height: 100%;
+            background: #00e676;
+            width: 50%;
+            transition: width 0.5s ease;
+        }
+        .progress-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 10px;
+            margin-top: 4px;
+            font-weight: bold;
+        }
+
+        /* Levels Section */
+        .levels-container {
+            background: #171f2d;
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 12px;
+            border: 1px solid #232f44;
+        }
+        .level-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            margin-bottom: 6px;
+        }
+
         .btn {
             background-color: #00e676;
-            color: #0b0e14;
+            color: #0b0d12;
             border: none;
             padding: 12px;
             width: 100%;
-            border-radius: 8px;
-            font-size: 15px;
+            border-radius: 10px;
+            font-size: 14px;
             font-weight: bold;
             cursor: pointer;
-            margin-top: 15px;
+            transition: 0.3s;
         }
-        .btn:hover {
-            background-color: #00c853;
+        .btn:disabled {
+            background-color: #2a364f;
+            color: #64748b;
+            cursor: not-allowed;
         }
     </style>
 </head>
@@ -90,66 +194,165 @@
 
 <div class="card">
     <h2>JAAJA-BOT PRO</h2>
-    <p class="subtitle">Market Signal Analysis</p>
+    <p class="subtitle">AI Smart Voting & Signal Engine</p>
 
-    <!-- Qaybta Doorashada Lacagta -->
+    <!-- Inputs -->
     <div class="form-group">
-        <label for="asset">Select Currency Pair (Dooro Lacagta):</label>
+        <label>Select Pair (Dooro Lacagta):</label>
         <select id="asset">
             <option value="EUR/USD">EUR/USD (OTC)</option>
             <option value="GBP/USD">GBP/USD (OTC)</option>
             <option value="USD/JPY">USD/JPY (OTC)</option>
             <option value="AUD/USD">AUD/USD (OTC)</option>
-            <option value="USD/CAD">USD/CAD (OTC)</option>
-            <option value="EUR/GBP">EUR/GBP (OTC)</option>
-            <option value="BTC/USD">Crypto - BTC/USD</option>
+            <option value="BTC/USD">BTC/USD (Crypto)</option>
         </select>
     </div>
 
-    <!-- Qaybta Doorashada Waqtiga -->
     <div class="form-group">
-        <label for="timeframe">Select Timeframe (Waqtiga):</label>
+        <label>Timeframe (Waqtiga):</label>
         <select id="timeframe">
-            <option value="1M">1 Minute</option>
-            <option value="2M">2 Minutes</option>
-            <option value="5M">5 Minutes</option>
+            <option value="1">1 Minute</option>
+            <option value="2">2 Minutes</option>
+            <option value="5">5 Minutes</option>
         </select>
     </div>
 
-    <div class="signal-box" id="signalDisplay">CALL ↑</div>
-
-    <div class="info-row">
-        <span>Confidence:</span>
-        <strong id="confidenceDisplay">85%</strong>
+    <!-- Direction & Duration -->
+    <div class="grid-2">
+        <div class="box">
+            <div class="box-title">Duration</div>
+            <div class="box-value" id="durationText">1 Minute</div>
+        </div>
+        <div class="box red" id="directionBox">
+            <div class="box-title">Direction</div>
+            <div class="box-value" id="directionText" style="color: #ff5252;">WAIT</div>
+        </div>
     </div>
-    <div class="info-row">
-        <span>Indicators:</span>
-        <strong>RSI, MACD, EMA</strong>
+
+    <!-- Price & Confidence -->
+    <div class="grid-2">
+        <div class="box green">
+            <div class="box-title">$ Current Price</div>
+            <div class="box-value" id="currentPrice">1.12526</div>
+        </div>
+        <div class="box">
+            <div class="box-title">Confidence</div>
+            <div class="box-value" id="confidenceText">98%</div>
+        </div>
     </div>
 
-    <button class="btn" onclick="generateSignal()">GET NEXT SIGNAL</button>
+    <!-- Indicator Votes Section -->
+    <div class="votes-container">
+        <div class="votes-header">Indicator Votes</div>
+        <div class="votes-grid" id="votesGrid">
+            <div class="vote-item"><span>EMA</span><span class="vote-status status-neutral">-</span></div>
+            <div class="vote-item"><span>RSI</span><span class="vote-status status-neutral">-</span></div>
+            <div class="vote-item"><span>MACD</span><span class="vote-status status-neutral">-</span></div>
+            <div class="vote-item"><span>Bollinger</span><span class="vote-status status-neutral">-</span></div>
+            <div class="vote-item"><span>Stochastic</span><span class="vote-status status-neutral">-</span></div>
+            <div class="vote-item"><span>Momentum</span><span class="vote-status status-neutral">-</span></div>
+            <div class="vote-item"><span>Trend</span><span class="vote-status status-neutral">-</span></div>
+            <div class="vote-item"><span>S/R Vote</span><span class="vote-status status-neutral">-</span></div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="progress-wrapper">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-labels">
+                <span style="color: #00e676;" id="callCount">CALL 0</span>
+                <span style="color: #ff5252;" id="putCount">PUT 0</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Levels -->
+    <div class="levels-container">
+        <div class="level-row"><span style="color: #ff5252;">RESISTANCE</span><strong id="resPrice">1.12616</strong></div>
+        <div class="level-row"><span style="color: #00e676;">SUPPORT</span><strong id="supPrice">1.12401</strong></div>
+        <div class="level-row"><span style="color: #ffb74d;">PIVOT</span><strong id="pivPrice">1.12508</strong></div>
+    </div>
+
+    <button class="btn" id="analyzeBtn" onclick="generateProSignal()">GENERATE PRO SIGNAL</button>
 </div>
 
 <script>
-    function generateSignal() {
-        const signals = ["CALL ↑", "PUT ↓"];
-        const randomSignal = signals[Math.floor(Math.random() * signals.length)];
-        const randomConfidence = Math.floor(Math.random() * (95 - 75 + 1)) + 75;
+    function generateProSignal() {
+        const btn = document.getElementById("analyzeBtn");
+        btn.disabled = true;
+        btn.innerText = "ANALYZING MARKET...";
 
-        const display = document.getElementById("signalDisplay");
-        display.innerText = randomSignal;
-        
-        if (randomSignal === "CALL ↑") {
-            display.style.borderColor = "#00e676";
-            display.style.color = "#00e676";
-            display.style.background = "rgba(0, 230, 118, 0.05)";
-        } else {
-            display.style.borderColor = "#ff5252";
-            display.style.color = "#ff5252";
-            display.style.background = "rgba(255, 82, 82, 0.05)";
-        }
+        setTimeout(() => {
+            const isBuy = Math.random() > 0.5; // Dooro BUY ama SELL randomly
+            const timeframeVal = document.getElementById("timeframe").value;
+            document.getElementById("durationText").innerText = timeframeVal + " Minute";
 
-        document.getElementById("confidenceDisplay").innerText = randomConfidence + "%";
+            // Prices
+            const basePrice = (Math.random() * (1.13000 - 1.12000) + 1.12000).toFixed(5);
+            document.getElementById("currentPrice").innerText = basePrice;
+            document.getElementById("resPrice").innerText = (parseFloat(basePrice) + 0.00090).toFixed(5);
+            document.getElementById("supPrice").innerText = (parseFloat(basePrice) - 0.00090).toFixed(5);
+            document.getElementById("pivPrice").innerText = (parseFloat(basePrice) + 0.00010).toFixed(5);
+
+            // Confidence
+            const conf = (Math.random() * (100 - 96) + 96).toFixed(0);
+            document.getElementById("confidenceText").innerText = conf + "%";
+
+            // Indicator votes logic
+            let callVotes = 0;
+            let putVotes = 0;
+            const indicators = ["EMA", "RSI", "MACD", "Bollinger", "Stochastic", "Momentum", "Trend", "S/R Vote"];
+            let votesHTML = "";
+
+            indicators.forEach(ind => {
+                let status = "";
+                let voteType = "";
+
+                if (isBuy) {
+                    // Yacni haduu BUY yahay, 80% waxay noqonayaan CALL
+                    voteType = Math.random() > 0.2 ? "CALL" : "PUT";
+                } else {
+                    // Yacni haduu SELL yahay, 80% waxay noqonayaan PUT
+                    voteType = Math.random() > 0.2 ? "PUT" : "CALL";
+                }
+
+                if (voteType === "CALL") {
+                    callVotes++;
+                    status = `<span class="vote-status status-call">▲ CALL</span>`;
+                } else {
+                    putVotes++;
+                    status = `<span class="vote-status status-put">▼ PUT</span>`;
+                }
+
+                votesHTML += `<div class="vote-item"><span>${ind}</span>${status}</div>`;
+            });
+
+            document.getElementById("votesGrid").innerHTML = votesHTML;
+
+            // Update direction & Bar
+            const totalVotes = callVotes + putVotes;
+            const callPercent = (callVotes / totalVotes) * 100;
+            document.getElementById("progressFill").style.width = callPercent + "%";
+            document.getElementById("callCount").innerText = "CALL " + callVotes;
+            document.getElementById("putCount").innerText = "PUT " + putVotes;
+
+            const dirBox = document.getElementById("directionBox");
+            const dirText = document.getElementById("directionText");
+
+            if (isBuy) {
+                dirText.innerText = "CALL";
+                dirText.style.color = "#00e676";
+                dirBox.style.borderLeftColor = "#00e676";
+            } else {
+                dirText.innerText = "PUT";
+                dirText.style.color = "#ff5252";
+                dirBox.style.borderLeftColor = "#ff5252";
+            }
+
+            btn.disabled = false;
+            btn.innerText = "GENERATE PRO SIGNAL";
+        }, 1500);
     }
 </script>
 
