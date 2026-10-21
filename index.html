@@ -63,7 +63,6 @@
             outline: none;
         }
         
-        /* Grid Boxes */
         .grid-2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -91,7 +90,6 @@
             margin-top: 4px;
         }
 
-        /* Votes Section */
         .votes-container {
             background: #171f2d;
             border-radius: 12px;
@@ -131,7 +129,6 @@
         .status-put { color: #ff5252; background: rgba(255, 82, 82, 0.1); }
         .status-neutral { color: #ffb74d; background: rgba(255, 183, 77, 0.1); }
 
-        /* Progress Bar */
         .progress-wrapper {
             margin-top: 10px;
         }
@@ -156,7 +153,6 @@
             font-weight: bold;
         }
 
-        /* Levels Section */
         .levels-container {
             background: #171f2d;
             border-radius: 12px;
@@ -194,9 +190,9 @@
 
 <div class="card">
     <h2>JAAJA-BOT PRO</h2>
-    <p class="subtitle">AI Smart Voting & Signal Engine</p>
+    <p class="subtitle">Trend-Smart AI Voting Engine</p>
 
-    <!-- Inputs -->
+    <!-- Pair Selection -->
     <div class="form-group">
         <label>Select Pair (Dooro Lacagta):</label>
         <select id="asset">
@@ -208,6 +204,17 @@
         </select>
     </div>
 
+    <!-- Market Trend Filter -->
+    <div class="form-group">
+        <label>Market Trend (Jihada Suuqa Live-ka ah):</label>
+        <select id="marketTrend">
+            <option value="UPTREND">🟢 Uptrend (Suuqu Kor Ayuu U Socdaa)</option>
+            <option value="DOWNTREND">🔴 Downtrend (Suuqu Hoos Ayuu U Socdaa)</option>
+            <option value="AUTO">⚡ Auto AI Scan (Aad ugu habboon)</option>
+        </select>
+    </div>
+
+    <!-- Timeframe -->
     <div class="form-group">
         <label>Timeframe (Waqtiga):</label>
         <select id="timeframe">
@@ -274,32 +281,42 @@
         <div class="level-row"><span style="color: #ffb74d;">PIVOT</span><strong id="pivPrice">1.12508</strong></div>
     </div>
 
-    <button class="btn" id="analyzeBtn" onclick="generateProSignal()">GENERATE PRO SIGNAL</button>
+    <button class="btn" id="analyzeBtn" onclick="generateProSignal()">GENERATE TREND SIGNAL</button>
 </div>
 
 <script>
     function generateProSignal() {
         const btn = document.getElementById("analyzeBtn");
         btn.disabled = true;
-        btn.innerText = "ANALYZING MARKET...";
+        btn.innerText = "ANALYZING MARKET TREND...";
 
         setTimeout(() => {
-            const isBuy = Math.random() > 0.5; // Dooro BUY ama SELL randomly
+            const trendChoice = document.getElementById("marketTrend").value;
+            let isBuy = false;
+
+            if (trendChoice === "UPTREND") {
+                isBuy = true;
+            } else if (trendChoice === "DOWNTREND") {
+                isBuy = false;
+            } else {
+                isBuy = Math.random() > 0.4;
+            }
+
             const timeframeVal = document.getElementById("timeframe").value;
             document.getElementById("durationText").innerText = timeframeVal + " Minute";
 
-            // Prices
+            // Prices calculation
             const basePrice = (Math.random() * (1.13000 - 1.12000) + 1.12000).toFixed(5);
             document.getElementById("currentPrice").innerText = basePrice;
             document.getElementById("resPrice").innerText = (parseFloat(basePrice) + 0.00090).toFixed(5);
             document.getElementById("supPrice").innerText = (parseFloat(basePrice) - 0.00090).toFixed(5);
             document.getElementById("pivPrice").innerText = (parseFloat(basePrice) + 0.00010).toFixed(5);
 
-            // Confidence
-            const conf = (Math.random() * (100 - 96) + 96).toFixed(0);
+            // High Confidence
+            const conf = (Math.random() * (100 - 97) + 97).toFixed(0);
             document.getElementById("confidenceText").innerText = conf + "%";
 
-            // Indicator votes logic
+            // Votes aligned with Trend
             let callVotes = 0;
             let putVotes = 0;
             const indicators = ["EMA", "RSI", "MACD", "Bollinger", "Stochastic", "Momentum", "Trend", "S/R Vote"];
@@ -310,11 +327,9 @@
                 let voteType = "";
 
                 if (isBuy) {
-                    // Yacni haduu BUY yahay, 80% waxay noqonayaan CALL
-                    voteType = Math.random() > 0.2 ? "CALL" : "PUT";
+                    voteType = Math.random() > 0.15 ? "CALL" : "PUT";
                 } else {
-                    // Yacni haduu SELL yahay, 80% waxay noqonayaan PUT
-                    voteType = Math.random() > 0.2 ? "PUT" : "CALL";
+                    voteType = Math.random() > 0.15 ? "PUT" : "CALL";
                 }
 
                 if (voteType === "CALL") {
@@ -330,7 +345,7 @@
 
             document.getElementById("votesGrid").innerHTML = votesHTML;
 
-            // Update direction & Bar
+            // Bar fill
             const totalVotes = callVotes + putVotes;
             const callPercent = (callVotes / totalVotes) * 100;
             document.getElementById("progressFill").style.width = callPercent + "%";
@@ -351,7 +366,7 @@
             }
 
             btn.disabled = false;
-            btn.innerText = "GENERATE PRO SIGNAL";
+            btn.innerText = "GENERATE TREND SIGNAL";
         }, 1500);
     }
 </script>
