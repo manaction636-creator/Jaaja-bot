@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEUROBOT - Candle Timer V2.5</title>
+    <title>NEUROBOT - Expanded OTC Pairs V2.6</title>
     <style>
         * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; }
         body { background-color: #f3f4f6; color: #1f2937; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 15px; }
@@ -68,7 +68,7 @@
 <div class="terminal-card">
     <div class="header">
         <h1>NEURO<span>BOT</span></h1>
-        <p>Market Health & Candle Timer V2.5</p>
+        <p>Market Health & Candle Timer V2.6</p>
         <div class="pair-badge" id="pairDisplay">CAD/CHF (OTC) • 1m</div>
     </div>
 
@@ -118,11 +118,14 @@
 
     <!-- Controls -->
     <div class="controls">
-        <label style="font-size: 11px; font-weight: bold; color: #6b7280;">1. Dooro OTC Pair:</label>
+        <label style="font-size: 11px; font-weight: bold; color: #6b7280;">1. Dooro OTC Pair (Quotex List):</label>
         <select id="assetSelect" onchange="checkMarketHealth()">
             <option value="CAD/CHF (OTC)">CAD/CHF (OTC)</option>
+            <option value="USD/CAD (OTC)">USD/CAD (OTC)</option>
             <option value="EUR/USD (OTC)">EUR/USD (OTC)</option>
-            <option value="GBP/USD (OTC)">GBP/USD (OTC)</option>
+            <option value="EUR/JPY (OTC)">EUR/JPY (OTC)</option>
+            <option value="AUD/USD (OTC)">AUD/USD (OTC)</option>
+            <option value="USD/BDT (OTC)">USD/BDT (OTC)</option>
             <option value="USD/JPY (OTC)">USD/JPY (OTC)</option>
         </select>
 
@@ -139,7 +142,6 @@
 <script>
     let isMarketClosed = false;
 
-    // 1-Minute Live Candle Timer Sync
     function startCandleTimer() {
         setInterval(() => {
             const now = new Date();
@@ -224,7 +226,6 @@
         }, 1000);
     }
 
-    // Startup Execution
     startCandleTimer();
     checkMarketHealth();
 </script>
