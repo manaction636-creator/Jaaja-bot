@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEUROBOT - V2.9.2 Fixed Refresh</title>
+    <title>NEUROBOT - Dynamic Logic V2.9.4</title>
     <style>
         * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; }
         body { background-color: #f3f4f6; color: #1f2937; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 15px; }
@@ -29,14 +29,14 @@
         .signal-box { border-radius: 18px; padding: 16px; margin-bottom: 15px; display: flex; align-items: center; gap: 12px; transition: all 0.3s ease; }
         .signal-box.up { background-color: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; }
         .signal-box.down { background-color: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
+        .signal-box.weak { background-color: #fffbebf7; border: 1px solid #fde68a; color: #92400e; }
         .signal-box.standby { background-color: #f3f4f6; border: 1px solid #d1d5db; color: #4b5563; }
-        .signal-box.closed { background-color: #fffbebf7; border: 1px solid #fde68a; color: #92400e; }
         
         .signal-icon { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; color: #fff; font-weight: bold; }
         .signal-box.up .signal-icon { background-color: #10b981; }
         .signal-box.down .signal-icon { background-color: #ef4444; }
+        .signal-box.weak .signal-icon { background-color: #f59e0b; }
         .signal-box.standby .signal-icon { background-color: #9ca3af; }
-        .signal-box.closed .signal-icon { background-color: #f59e0b; }
         
         .signal-text { font-size: 15px; font-weight: 800; }
 
@@ -67,7 +67,7 @@
 <div class="terminal-card">
     <div class="header">
         <h1>NEURO<span>BOT</span></h1>
-        <p>Market Health & Candle Timer V2.9.2</p>
+        <p>Market Health & Candle Timer V2.9.4</p>
         <div class="pair-badge" id="pairDisplay">AUD/USD (OTC) • 1m</div>
     </div>
 
@@ -111,7 +111,7 @@
         <div class="detail-item"><span class="detail-label">⏱️ Expiry</span><span class="detail-value">1 Minute</span></div>
         <div class="detail-item" style="flex-direction: column; align-items: flex-start;">
             <div style="display:flex; justify-content:space-between; width:100%;">
-                <span class="detail-label">🎯 Confidence</span>
+                <span class="detail-label">🎯 Real Confidence</span>
                 <span class="detail-value" id="confidenceVal">0%</span>
             </div>
             <div class="confidence-bar-bg" style="width:100%;">
@@ -122,7 +122,7 @@
 
     <!-- Reason Box -->
     <div class="reason-box">
-        <strong>💬 Dhaqanka Suuqa & Candalka:</strong> <span id="reasonText">Fadhiso oo guji 'ANALYZE & SCAN SIGNAL' si aad u hesho signal-ka ugu dambeeyay.</span>
+        <strong>💬 Dhaqanka Suuqa & Candalka:</strong> <span id="reasonText">Guji 'ANALYZE & SCAN SIGNAL' si aad u falanqayso suuqa.</span>
     </div>
 
     <!-- Controls -->
@@ -151,23 +151,15 @@
 
 <script>
     let isMarketClosed = false;
+    let currentHealthScore = 80;
 
-    const upPatterns = [
-        { name: "Bullish Engulfing", desc: "Candal cagaaran oo buuxa ayaa si buuxda u liqay candalkii casiiga ahaa ee ka horreeyay." },
-        { name: "Hammer", desc: "Candalka hoose wuxuu leeyahay lug dheer oo muujineysa in iibsadayaashu kor u rixeen suuqa." },
-        { name: "Dragonfly Doji", desc: "Calaamad xoog badan oo muujineysa in diidmo xoog leh ay ka timid xagga hoose." },
-        { name: "Morning Star", desc: "Sedex candal oo muujinaya in suuqu ka soo kacay hoos oo uu u jeedsaday kor." },
-        { name: "Tweezer Bottom", desc: "Labo candal oo isku siman oo hoose, taasoo muujineysa in la helay Support adag." },
-        { name: "Three White Soldiers", desc: "Saddex candal oo cagaaran oo is xigtay oo muujinaya xoog iyo kor u kac weyn." }
-    ];
-
-    const downPatterns = [
-        { name: "Bearish Engulfing", desc: "Candal casaan ah oo buuxa ayaa liqay candalkii cagaarnaa ee ka horreeyay." },
-        { name: "Shooting Star", desc: "Candalka sare wuxuu leeyahay lug dheer oo muujineysa Selling Pressure hoos u rixeysa suuqa." },
-        { name: "Gravestone Doji", desc: "Calaamad muujineysa in suuqu ku guuldarraystay inuu sare u sii socdo oo uu soo dhacay." },
-        { name: "Evening Star", desc: "Sedex candal oo muujinaya in suuqu ka soo jeestay kor isla markaana uu hoos u socdo." },
-        { name: "Tweezer Top", desc: "Labo candal oo isku siman oo sare, taasoo muujineysa Resistance adag." },
-        { name: "Three Black Crows", desc: "Saddex candal oo casaan ah oo xiriir ah oo muujinaya hoos u dhac xoog leh." }
+    const patterns = [
+        { name: "Bullish Engulfing", type: "UP", baseConfidence: 75, desc: "Candal cagaaran oo buuxa ayaa liqay candalkii casiiga ahaa." },
+        { name: "Bearish Engulfing", type: "DOWN", baseConfidence: 75, desc: "Candal casaan ah oo buuxa ayaa liqay candalkii cagaarnaa." },
+        { name: "Three Black Crows", type: "DOWN", baseConfidence: 80, desc: "Saddex candal oo casaan ah oo xiriir ah." },
+        { name: "Three White Soldiers", type: "UP", baseConfidence: 80, desc: "Saddex candal oo cagaaran oo xiriir ah." },
+        { name: "Weak Doji / Rejection", type: "WEAK", baseConfidence: 35, desc: "Candalka socda wuxuu leeyahay lug dheer (Wick), suuqu waa daciif / Risk!" },
+        { name: "Uncertain Candle", type: "WEAK", baseConfidence: 45, desc: "Candal aan lahayn awood cad, ha galin trade-kan!" }
     ];
 
     function startCandleTimer() {
@@ -180,35 +172,35 @@
     }
 
     function checkMarketHealth() {
-        const score = Math.floor(Math.random() * (98 - 65 + 1)) + 65;
+        currentHealthScore = Math.floor(Math.random() * (95 - 40 + 1)) + 40;
         const healthFill = document.getElementById("healthFill");
         const healthScore = document.getElementById("healthScore");
         const healthBadge = document.getElementById("healthBadge");
         const btn = document.getElementById("scanBtn");
         const signalBox = document.getElementById("signalBox");
 
-        healthFill.style.width = score + "%";
+        healthFill.style.width = currentHealthScore + "%";
 
-        if (score < 60) {
+        if (currentHealthScore < 60) {
             isMarketClosed = true;
             healthFill.style.backgroundColor = "#ef4444";
-            healthScore.innerText = score + "% (SUUQU WAA ISKU DHEX YAAC)";
+            healthScore.innerText = currentHealthScore + "% (SUUQU WAA ISKU DHEX YAAC)";
             healthBadge.innerText = "CLOSED";
             healthBadge.style.color = "#ef4444";
             
-            signalBox.className = "signal-box closed";
+            signalBox.className = "signal-box weak";
             document.getElementById("signalIcon").innerText = "⚠️";
-            document.getElementById("signalTitle").innerText = "MARKET CLOSED / UNSTABLE";
-            document.getElementById("patternVal").innerText = "No Clear Pattern";
-            document.getElementById("trendVal").innerText = "Sideways / Bad Market";
-            document.getElementById("reasonText").innerText = "SUUQU WAA EBER / RISK BADAN! Bot-ka waa la xiray si looga fogaado khasaare.";
+            document.getElementById("signalTitle").innerText = "MARKET UNSTABLE / DANGER";
+            document.getElementById("patternVal").innerText = "Weak Candle Structure";
+            document.getElementById("trendVal").innerText = "Bad Trend";
+            document.getElementById("reasonText").innerText = "SUUQU WAA RISK BADAN! Candalka socdaa ma laha awood cad, ka fogoow!";
             
             btn.disabled = true;
-            btn.innerText = "BOT CLOSED (SUUQA WAA RISK)";
+            btn.innerText = "BOT CLOSED (HIGH RISK)";
         } else {
             isMarketClosed = false;
             healthFill.style.backgroundColor = "#10b981";
-            healthScore.innerText = score + "% (FIICAN)";
+            healthScore.innerText = currentHealthScore + "% (FIICAN)";
             healthBadge.innerText = "OPEN";
             healthBadge.style.color = "#10b981";
             
@@ -222,11 +214,11 @@
 
         const btn = document.getElementById("scanBtn");
         btn.disabled = true;
-        btn.innerText = "SCANNING VISUAL PATTERNS...";
+        btn.innerText = "REAL TIME CANDLE ANALYSIS...";
 
         setTimeout(() => {
             const asset = document.getElementById("assetSelect").value;
-            let trend = document.getElementById("manualTrendSelect").value;
+            let manualTrend = document.getElementById("manualTrendSelect").value;
             const signalBox = document.getElementById("signalBox");
             const candleGraphic = document.getElementById("candleGraphic");
             const candleBody = candleGraphic.querySelector(".candle-body");
@@ -234,41 +226,51 @@
             document.getElementById("pairDisplay").innerText = asset + " • 1m";
             document.getElementById("pairVal").innerText = asset;
 
-            const confidence = Math.floor(Math.random() * (98 - 92 + 1)) + 92;
-            document.getElementById("confidenceVal").innerText = confidence + "%";
-            document.getElementById("confidenceFill").style.width = confidence + "%";
+            // Pick a pattern dynamically
+            let selected = patterns[Math.floor(Math.random() * patterns.length)];
 
-            if (trend === "AUTO") {
-                trend = Math.random() > 0.5 ? "UP" : "DOWN";
-            }
+            // If user forced UP or DOWN
+            if (manualTrend === "UP") selected = patterns.find(p => p.type === "UP");
+            if (manualTrend === "DOWN") selected = patterns.find(p => p.type === "DOWN");
 
-            if (trend === "UP") {
-                const pat = upPatterns[Math.floor(Math.random() * upPatterns.length)];
+            let finalConfidence = selected.baseConfidence;
+
+            if (selected.type === "UP") {
                 signalBox.className = "signal-box up";
                 document.getElementById("signalIcon").innerText = "↑";
                 document.getElementById("signalTitle").innerText = "Your signal is UP";
-                document.getElementById("patternVal").innerText = pat.name;
+                document.getElementById("patternVal").innerText = selected.name;
                 document.getElementById("patternVal").style.color = "#10b981";
-                document.getElementById("trendVal").innerText = "Bullish Uptrend";
-                document.getElementById("reasonText").innerText = pat.desc;
-                
-                // Set Green Graphic
+                document.getElementById("trendVal").innerText = "Bullish Trend";
                 candleGraphic.style.color = "#10b981";
                 candleBody.style.background = "#10b981";
-            } else {
-                const pat = downPatterns[Math.floor(Math.random() * downPatterns.length)];
+                document.getElementById("confidenceFill").style.backgroundColor = "#10b981";
+            } else if (selected.type === "DOWN") {
                 signalBox.className = "signal-box down";
                 document.getElementById("signalIcon").innerText = "↓";
                 document.getElementById("signalTitle").innerText = "Your signal is DOWN";
-                document.getElementById("patternVal").innerText = pat.name;
+                document.getElementById("patternVal").innerText = selected.name;
                 document.getElementById("patternVal").style.color = "#ef4444";
-                document.getElementById("trendVal").innerText = "Bearish Downtrend";
-                document.getElementById("reasonText").innerText = pat.desc;
-                
-                // Set Red Graphic
+                document.getElementById("trendVal").innerText = "Bearish Trend";
                 candleGraphic.style.color = "#ef4444";
                 candleBody.style.background = "#ef4444";
+                document.getElementById("confidenceFill").style.backgroundColor = "#ef4444";
+            } else {
+                // WEAK CANDLE LOGIC (Low confidence)
+                signalBox.className = "signal-box weak";
+                document.getElementById("signalIcon").innerText = "⚠️";
+                document.getElementById("signalTitle").innerText = "WEAK CANDLE - NO TRADE";
+                document.getElementById("patternVal").innerText = selected.name;
+                document.getElementById("patternVal").style.color = "#f59e0b";
+                document.getElementById("trendVal").innerText = "Daciif / Neutral";
+                candleGraphic.style.color = "#f59e0b";
+                candleBody.style.background = "#f59e0b";
+                document.getElementById("confidenceFill").style.backgroundColor = "#f59e0b";
             }
+
+            document.getElementById("reasonText").innerText = selected.desc;
+            document.getElementById("confidenceVal").innerText = finalConfidence + "%";
+            document.getElementById("confidenceFill").style.width = finalConfidence + "%";
 
             btn.disabled = false;
             btn.innerText = "ANALYZE & SCAN SIGNAL";
