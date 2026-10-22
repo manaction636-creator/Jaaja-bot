@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEUROBOT - Full Patterns V2.9</title>
+    <title>NEUROBOT - Visual Patterns V2.9.2</title>
     <style>
         * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; }
         body { background-color: #f3f4f6; color: #1f2937; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 15px; }
@@ -43,6 +43,12 @@
         .detail-label { color: #6b7280; }
         .detail-value { font-weight: 700; color: #111827; }
 
+        /* Visual Candle Graphic Box */
+        .candle-visual-container { display: flex; align-items: center; gap: 8px; }
+        .candle-graphic { width: 14px; height: 32px; position: relative; display: flex; justify-content: center; align-items: center; }
+        .candle-wick { position: absolute; width: 2px; height: 100%; background: inherit; }
+        .candle-body { position: absolute; width: 12px; height: 18px; border-radius: 3px; }
+
         .confidence-bar-bg { height: 6px; background: #e5e7eb; border-radius: 10px; overflow: hidden; margin-top: 4px; }
         .confidence-fill { height: 100%; width: 0%; border-radius: 10px; transition: width 0.5s ease; background-color: #10b981; }
 
@@ -59,7 +65,7 @@
 <div class="terminal-card">
     <div class="header">
         <h1>NEURO<span>BOT</span></h1>
-        <p>Market Health & Candle Timer V2.9</p>
+        <p>Market Health & Candle Timer V2.9.2</p>
         <div class="pair-badge" id="pairDisplay">AUD/USD (OTC) • 1m</div>
     </div>
 
@@ -81,15 +87,24 @@
     </div>
 
     <!-- Signal Box -->
-    <div class="signal-box down" id="signalBox">
-        <div class="signal-icon" id="signalIcon">↓</div>
-        <div class="signal-text" id="signalTitle">Your signal is DOWN</div>
+    <div class="signal-box up" id="signalBox">
+        <div class="signal-icon" id="signalIcon">↑</div>
+        <div class="signal-text" id="signalTitle">Your signal is UP</div>
     </div>
 
     <!-- Details -->
     <div class="details-list">
         <div class="detail-item"><span class="detail-label">📊 Pair</span><span class="detail-value" id="pairVal">AUD/USD (OTC)</span></div>
-        <div class="detail-item"><span class="detail-label">🕯️ Dhaqanka Candalka</span><span class="detail-value" id="patternVal" style="color: #2563eb;">Bullish Engulfing</span></div>
+        <div class="detail-item">
+            <span class="detail-label">🕯️ Dhaqanka Candalka</span>
+            <div class="candle-visual-container">
+                <div class="candle-graphic" id="candleGraphic" style="color: #10b981;">
+                    <div class="candle-wick"></div>
+                    <div class="candle-body" style="background: #10b981;"></div>
+                </div>
+                <span class="detail-value" id="patternVal" style="color: #10b981;">Bullish Engulfing</span>
+            </div>
+        </div>
         <div class="detail-item"><span class="detail-label">📈 Trend Status</span><span class="detail-value" id="trendVal">Bullish Uptrend</span></div>
         <div class="detail-item"><span class="detail-label">⏱️ Expiry</span><span class="detail-value">1 Minute</span></div>
         <div class="detail-item" style="flex-direction: column; align-items: flex-start;">
@@ -135,29 +150,22 @@
 <script>
     let isMarketClosed = false;
 
-    // Full Professional Patterns from Images
     const upPatterns = [
         { name: "Bullish Engulfing", desc: "Candal cagaaran oo buuxa ayaa si buuxda u liqay candalkii casiiga ahaa ee ka horreeyay." },
         { name: "Hammer", desc: "Candalka hoose wuxuu leeyahay lug dheer oo muujineysa in iibsadayaashu kor u rixeen suuqa." },
         { name: "Dragonfly Doji", desc: "Calaamad xoog badan oo muujineysa in diidmo xoog leh ay ka timid xagga hoose." },
         { name: "Morning Star", desc: "Sedex candal oo muujinaya in suuqu ka soo kacay hoos oo uu u jeedsaday kor." },
         { name: "Tweezer Bottom", desc: "Labo candal oo isku siman oo hoose, taasoo muujineysa in la helay Support adag." },
-        { name: "Three White Soldiers", desc: "Saddex candal oo cagaaran oo is xigtay oo muujinaya xoog iyo kor u kac weyn." },
-        { name: "Piercing Pattern", desc: "Candal cagaaran oo soo galay kala bar ama ka badan candalkii casaa." },
-        { name: "Bullish Kicker", desc: "Jawaab celin degdeg ah oo cagaaran oo ka soo kabhaday hoos." },
-        { name: "Rising Three Method", desc: "Sii wadashada trend-ka kor u kaca ee suuqa." }
+        { name: "Three White Soldiers", desc: "Saddex candal oo cagaaran oo is xigtay oo muujinaya xoog iyo kor u kac weyn." }
     ];
 
     const downPatterns = [
         { name: "Bearish Engulfing", desc: "Candal casaan ah oo buuxa ayaa liqay candalkii cagaarnaa ee ka horreeyay." },
-        { name: "Shooting Star / Inverted Hammer", desc: "Candalka sare wuxuu leeyahay lug dheer oo muujineysa Selling Pressure hoos u rixeysa suuqa." },
+        { name: "Shooting Star", desc: "Candalka sare wuxuu leeyahay lug dheer oo muujineysa Selling Pressure hoos u rixeysa suuqa." },
         { name: "Gravestone Doji", desc: "Calaamad muujineysa in suuqu ku guuldarraystay inuu sare u sii socdo oo uu soo dhacay." },
         { name: "Evening Star", desc: "Sedex candal oo muujinaya in suuqu ka soo jeestay kor isla markaana uu hoos u socdo." },
         { name: "Tweezer Top", desc: "Labo candal oo isku siman oo sare, taasoo muujineysa Resistance adag." },
-        { name: "Three Black Crows", desc: "Saddex candal oo casaan ah oo xiriir ah oo muujinaya hoos u dhac xoog leh." },
-        { name: "Dark Cloud Cover", desc: "Candal casaan ah oo qariyay qayb weyn oo ka mid ah kii cagaarnaa." },
-        { name: "Bearish Kicker", desc: "Jawaab celin degdeg ah oo casaan ah oo ka timid xagga sare." },
-        { name: "Falling Three Method", desc: "Sii wadashada trend-ka hoos u dhaca ee suuqa." }
+        { name: "Three Black Crows", desc: "Saddex candal oo casaan ah oo xiriir ah oo muujinaya hoos u dhac xoog leh." }
     ];
 
     function startCandleTimer() {
@@ -212,12 +220,14 @@
 
         const btn = document.getElementById("scanBtn");
         btn.disabled = true;
-        btn.innerText = "SCANNING PROFESSIONAL PATTERNS...";
+        btn.innerText = "SCANNING VISUAL PATTERNS...";
 
         setTimeout(() => {
             const asset = document.getElementById("assetSelect").value;
             let trend = document.getElementById("manualTrendSelect").value;
             const signalBox = document.getElementById("signalBox");
+            const candleGraphic = document.getElementById("candleGraphic");
+            const candleBody = candleGraphic.querySelector(".candle-body");
             
             document.getElementById("pairDisplay").innerText = asset + " • 1m";
             document.getElementById("pairVal").innerText = asset;
@@ -239,6 +249,10 @@
                 document.getElementById("patternVal").style.color = "#10b981";
                 document.getElementById("trendVal").innerText = "Bullish Uptrend";
                 document.getElementById("reasonText").innerText = pat.desc;
+                
+                // Set Green Graphic
+                candleGraphic.style.color = "#10b981";
+                candleBody.style.background = "#10b981";
             } else {
                 const pat = downPatterns[Math.floor(Math.random() * downPatterns.length)];
                 signalBox.className = "signal-box down";
@@ -248,6 +262,10 @@
                 document.getElementById("patternVal").style.color = "#ef4444";
                 document.getElementById("trendVal").innerText = "Bearish Downtrend";
                 document.getElementById("reasonText").innerText = pat.desc;
+                
+                // Set Red Graphic
+                candleGraphic.style.color = "#ef4444";
+                candleBody.style.background = "#ef4444";
             }
 
             btn.disabled = false;
