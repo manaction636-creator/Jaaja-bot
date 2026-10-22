@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEUROBOT - Candle Behavior Engine V2.8</title>
+    <title>NEUROBOT - Full Patterns V2.9</title>
     <style>
         * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; }
         body { background-color: #f3f4f6; color: #1f2937; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 15px; }
@@ -59,7 +59,7 @@
 <div class="terminal-card">
     <div class="header">
         <h1>NEURO<span>BOT</span></h1>
-        <p>Market Health & Candle Timer V2.8</p>
+        <p>Market Health & Candle Timer V2.9</p>
         <div class="pair-badge" id="pairDisplay">AUD/USD (OTC) • 1m</div>
     </div>
 
@@ -89,23 +89,23 @@
     <!-- Details -->
     <div class="details-list">
         <div class="detail-item"><span class="detail-label">📊 Pair</span><span class="detail-value" id="pairVal">AUD/USD (OTC)</span></div>
-        <div class="detail-item"><span class="detail-label">🕯️ Dhaqanka Candalka</span><span class="detail-value" id="patternVal" style="color: #2563eb;">Shooting Star</span></div>
-        <div class="detail-item"><span class="detail-label">📈 Trend Status</span><span class="detail-value" id="trendVal">Downtrend Locked</span></div>
+        <div class="detail-item"><span class="detail-label">🕯️ Dhaqanka Candalka</span><span class="detail-value" id="patternVal" style="color: #2563eb;">Bullish Engulfing</span></div>
+        <div class="detail-item"><span class="detail-label">📈 Trend Status</span><span class="detail-value" id="trendVal">Bullish Uptrend</span></div>
         <div class="detail-item"><span class="detail-label">⏱️ Expiry</span><span class="detail-value">1 Minute</span></div>
         <div class="detail-item" style="flex-direction: column; align-items: flex-start;">
             <div style="display:flex; justify-content:space-between; width:100%;">
                 <span class="detail-label">🎯 Confidence</span>
-                <span class="detail-value" id="confidenceVal">97%</span>
+                <span class="detail-value" id="confidenceVal">96%</span>
             </div>
             <div class="confidence-bar-bg" style="width:100%;">
-                <div class="confidence-fill" id="confidenceFill" style="width: 97%;"></div>
+                <div class="confidence-fill" id="confidenceFill" style="width: 96%;"></div>
             </div>
         </div>
     </div>
 
     <!-- Reason Box -->
     <div class="reason-box">
-        <strong>💬 Dhaqanka Suuqa & Candalka:</strong> <span id="reasonText">Candle-ka dambe wuxuu muujiyay dhabar-jab iyo dhibic sare oo hoos u rixeysa (Selling Pressure).</span>
+        <strong>💬 Dhaqanka Suuqa & Candalka:</strong> <span id="reasonText">Candal cagaaran oo buuxa ayaa si buuxda u liqay candalkii casiiga ahaa.</span>
     </div>
 
     <!-- Controls -->
@@ -135,19 +135,29 @@
 <script>
     let isMarketClosed = false;
 
-    // Candle Patterns & Behaviors
+    // Full Professional Patterns from Images
     const upPatterns = [
-        { name: "Bullish Hammer", desc: "Candalka hoose wuxuu leeyahay lug dheer oo muujineysa in Buyers-ku kor u rixeen suuqa." },
-        { name: "Bullish Engulfing", desc: "Candalka cagaaran wuxuu si buuxda u liqay candalkii casiiga ahaa ee ka horreeyay." },
-        { name: "Strong Green Momentum", desc: "Candal Cagaaran oo xawaare sare iyo awood leh oo kor u socda." },
-        { name: "Support Rejection", desc: "Price-ku wuxuu taabtay barta Support-ka oo uu dib uga soo laabtay kor." }
+        { name: "Bullish Engulfing", desc: "Candal cagaaran oo buuxa ayaa si buuxda u liqay candalkii casiiga ahaa ee ka horreeyay." },
+        { name: "Hammer", desc: "Candalka hoose wuxuu leeyahay lug dheer oo muujineysa in iibsadayaashu kor u rixeen suuqa." },
+        { name: "Dragonfly Doji", desc: "Calaamad xoog badan oo muujineysa in diidmo xoog leh ay ka timid xagga hoose." },
+        { name: "Morning Star", desc: "Sedex candal oo muujinaya in suuqu ka soo kacay hoos oo uu u jeedsaday kor." },
+        { name: "Tweezer Bottom", desc: "Labo candal oo isku siman oo hoose, taasoo muujineysa in la helay Support adag." },
+        { name: "Three White Soldiers", desc: "Saddex candal oo cagaaran oo is xigtay oo muujinaya xoog iyo kor u kac weyn." },
+        { name: "Piercing Pattern", desc: "Candal cagaaran oo soo galay kala bar ama ka badan candalkii casaa." },
+        { name: "Bullish Kicker", desc: "Jawaab celin degdeg ah oo cagaaran oo ka soo kabhaday hoos." },
+        { name: "Rising Three Method", desc: "Sii wadashada trend-ka kor u kaca ee suuqa." }
     ];
 
     const downPatterns = [
-        { name: "Shooting Star", desc: "Candalka sare wuxuu leeyahay oo muujinaya Selling Pressure hoos u rixeysa suuqa." },
-        { name: "Bearish Engulfing", desc: "Candalka casinka ah wuxuu liqay candalkii cagaarnaa ee ka horreeyay." },
-        { name: "Volume Spike Red", desc: "Mugga iibka (Volume) casinka ah oo aad u koray." },
-        { name: "Resistance Rejection", desc: "Price-ku wuxuu ku dhacay barta Resistance-ka oo uu hoos u soo laabtay." }
+        { name: "Bearish Engulfing", desc: "Candal casaan ah oo buuxa ayaa liqay candalkii cagaarnaa ee ka horreeyay." },
+        { name: "Shooting Star / Inverted Hammer", desc: "Candalka sare wuxuu leeyahay lug dheer oo muujineysa Selling Pressure hoos u rixeysa suuqa." },
+        { name: "Gravestone Doji", desc: "Calaamad muujineysa in suuqu ku guuldarraystay inuu sare u sii socdo oo uu soo dhacay." },
+        { name: "Evening Star", desc: "Sedex candal oo muujinaya in suuqu ka soo jeestay kor isla markaana uu hoos u socdo." },
+        { name: "Tweezer Top", desc: "Labo candal oo isku siman oo sare, taasoo muujineysa Resistance adag." },
+        { name: "Three Black Crows", desc: "Saddex candal oo casaan ah oo xiriir ah oo muujinaya hoos u dhac xoog leh." },
+        { name: "Dark Cloud Cover", desc: "Candal casaan ah oo qariyay qayb weyn oo ka mid ah kii cagaarnaa." },
+        { name: "Bearish Kicker", desc: "Jawaab celin degdeg ah oo casaan ah oo ka timid xagga sare." },
+        { name: "Falling Three Method", desc: "Sii wadashada trend-ka hoos u dhaca ee suuqa." }
     ];
 
     function startCandleTimer() {
@@ -202,7 +212,7 @@
 
         const btn = document.getElementById("scanBtn");
         btn.disabled = true;
-        btn.innerText = "READING CANDLE BEHAVIOR...";
+        btn.innerText = "SCANNING PROFESSIONAL PATTERNS...";
 
         setTimeout(() => {
             const asset = document.getElementById("assetSelect").value;
