@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEUROBOT - Expanded OTC Pairs V2.6</title>
+    <title>NEUROBOT - Auto & Manual Engine V2.7</title>
     <style>
         * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; }
         body { background-color: #f3f4f6; color: #1f2937; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 15px; }
@@ -15,16 +15,7 @@
         .pair-badge { display: inline-block; background: #eff6ff; color: #2563eb; font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 12px; margin-top: 6px; }
         
         /* Candle Timer Card */
-        .timer-card {
-            background: #111827;
-            color: #ffffff;
-            border-radius: 14px;
-            padding: 10px 14px;
-            margin-bottom: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+        .timer-card { background: #111827; color: #ffffff; border-radius: 14px; padding: 10px 14px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
         .timer-label { font-size: 11px; font-weight: bold; color: #9ca3af; text-transform: uppercase; }
         .timer-clock { font-size: 18px; font-weight: 900; color: #f59e0b; font-family: monospace; }
 
@@ -68,7 +59,7 @@
 <div class="terminal-card">
     <div class="header">
         <h1>NEURO<span>BOT</span></h1>
-        <p>Market Health & Candle Timer V2.6</p>
+        <p>Market Health & Candle Timer V2.7</p>
         <div class="pair-badge" id="pairDisplay">CAD/CHF (OTC) • 1m</div>
     </div>
 
@@ -98,7 +89,7 @@
     <!-- Details -->
     <div class="details-list">
         <div class="detail-item"><span class="detail-label">📊 Pair</span><span class="detail-value" id="pairVal">CAD/CHF (OTC)</span></div>
-        <div class="detail-item"><span class="detail-label">📈 Trend Status</span><span class="detail-value" id="trendVal">Downtrend Locked</span></div>
+        <div class="detail-item"><span class="detail-label">📈 Trend Status</span><span class="detail-value" id="trendVal">Auto Analysis Active</span></div>
         <div class="detail-item"><span class="detail-label">⏱️ Expiry</span><span class="detail-value">1 Minute</span></div>
         <div class="detail-item" style="flex-direction: column; align-items: flex-start;">
             <div style="display:flex; justify-content:space-between; width:100%;">
@@ -131,6 +122,7 @@
 
         <label style="font-size: 11px; font-weight: bold; color: #6b7280;">2. Waafaji Trend-ka Quotex:</label>
         <select id="manualTrendSelect">
+            <option value="AUTO">⚡ Auto Detect (BUY ama SELL dabiici ah)</option>
             <option value="DOWN">🔴 Force DOWN (SELL Signals Only)</option>
             <option value="UP">🟢 Force UP (BUY Signals Only)</option>
         </select>
@@ -197,7 +189,7 @@
 
         setTimeout(() => {
             const asset = document.getElementById("assetSelect").value;
-            const trend = document.getElementById("manualTrendSelect").value;
+            let trend = document.getElementById("manualTrendSelect").value;
             const signalBox = document.getElementById("signalBox");
             
             document.getElementById("pairDisplay").innerText = asset + " • 1m";
@@ -207,18 +199,23 @@
             document.getElementById("confidenceVal").innerText = confidence + "%";
             document.getElementById("confidenceFill").style.width = confidence + "%";
 
+            // If Auto is selected, randomly generate UP or DOWN
+            if (trend === "AUTO") {
+                trend = Math.random() > 0.5 ? "UP" : "DOWN";
+            }
+
             if (trend === "UP") {
                 signalBox.className = "signal-box up";
                 document.getElementById("signalIcon").innerText = "↑";
                 document.getElementById("signalTitle").innerText = "Your signal is UP";
-                document.getElementById("trendVal").innerText = "Strong Uptrend Locked";
-                document.getElementById("reasonText").innerText = "Signal-ku wuxuu si sax ah u raacay Trend-ka Cagaaran.";
+                document.getElementById("trendVal").innerText = "Uptrend Signal Generated";
+                document.getElementById("reasonText").innerText = "Signal-ku wuxuu bixiyay BUY (Candle Cagaaran).";
             } else {
                 signalBox.className = "signal-box down";
                 document.getElementById("signalIcon").innerText = "↓";
                 document.getElementById("signalTitle").innerText = "Your signal is DOWN";
-                document.getElementById("trendVal").innerText = "Strong Downtrend Locked";
-                document.getElementById("reasonText").innerText = "Signal-ku wuxuu si sax ah u raacay Trend-ka Casaanka ah.";
+                document.getElementById("trendVal").innerText = "Downtrend Signal Generated";
+                document.getElementById("reasonText").innerText = "Signal-ku wuxuu bixiyay SELL (Candle Casaan ah).";
             }
 
             btn.disabled = false;
