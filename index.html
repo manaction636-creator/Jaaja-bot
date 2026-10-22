@@ -3,492 +3,352 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JAAJA-BOT PRO - Strict Trend Engine</title>
+    <title>NEUROBOT - AI SIGNAL TERMINAL V2.0</title>
     <style>
         * {
             box-sizing: border-box;
-            font-family: 'Segoe UI', Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
         }
         body {
-            background-color: #0b0d12;
-            color: #ffffff;
+            background-color: #f3f4f6;
+            color: #1f2937;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            margin: 0;
             padding: 15px;
         }
-        .card {
-            background-color: #121620;
-            padding: 20px;
+        .terminal-card {
+            background: #ffffff;
             border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.08);
             width: 100%;
-            max-width: 400px;
-            border: 1px solid #1e2638;
+            max-width: 380px;
+            padding: 20px;
+            border: 1px solid #e5e7eb;
+            position: relative;
         }
-        h2 {
-            color: #00e676;
+        .header {
             text-align: center;
-            margin: 0 0 5px 0;
-            font-size: 22px;
+            margin-bottom: 15px;
+        }
+        .header h1 {
+            font-size: 20px;
+            font-weight: 900;
             letter-spacing: 1px;
+            color: #111827;
         }
-        p.subtitle {
-            color: #8a99ad;
-            font-size: 12px;
-            text-align: center;
-            margin: 0 0 15px 0;
+        .header h1 span {
+            color: #2563eb;
         }
-        .form-group {
-            margin-bottom: 12px;
-            text-align: left;
-        }
-        label {
+        .header p {
             font-size: 11px;
-            color: #8a99ad;
-            display: block;
-            margin-bottom: 4px;
+            color: #6b7280;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 2px;
+        }
+        
+        .pair-badge {
+            display: inline-block;
+            background: #eff6ff;
+            color: #2563eb;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 12px;
+            border-radius: 12px;
+            margin-top: 8px;
+        }
+
+        .signal-box {
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+        }
+        .signal-box.up {
+            background-color: #ecfdf5;
+            border: 1px solid #a7f3d0;
+            color: #065f46;
+        }
+        .signal-box.down {
+            background-color: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #991b1b;
+        }
+        .signal-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: #fff;
+            font-weight: bold;
+        }
+        .signal-box.up .signal-icon { background-color: #10b981; }
+        .signal-box.down .signal-icon { background-color: #ef4444; }
+        
+        .signal-text {
+            font-size: 16px;
+            font-weight: 800;
+        }
+
+        .details-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 15px;
+            font-size: 12px;
+        }
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #4b5563;
+        }
+        .detail-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #6b7280;
+        }
+        .detail-value {
+            font-weight: 700;
+            color: #111827;
+        }
+
+        .confidence-wrapper {
+            margin-top: 4px;
+        }
+        .confidence-bar-bg {
+            height: 6px;
+            background: #e5e7eb;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 4px;
+        }
+        .confidence-fill {
+            height: 100%;
+            width: 0%;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+        .up .confidence-fill { background-color: #10b981; }
+        .down .confidence-fill { background-color: #ef4444; }
+
+        .reason-box {
+            background: #f9fafb;
+            border-radius: 12px;
+            padding: 10px 12px;
+            font-size: 11px;
+            color: #6b7280;
+            border: 1px solid #f3f4f6;
+            margin-bottom: 15px;
+        }
+        .reason-title {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
         select {
             width: 100%;
             padding: 10px;
-            background-color: #1a2232;
-            color: #ffffff;
-            border: 1px solid #2e3c54;
             border-radius: 10px;
-            font-size: 13px;
-            outline: none;
-        }
-        
-        .grid-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 12px;
-        }
-        .box {
-            background: #171f2d;
-            border-radius: 12px;
-            padding: 10px 12px;
-            position: relative;
-            border-left: 3px solid #ffb74d;
-        }
-        .box.green { border-left-color: #00e676; }
-        .box.red { border-left-color: #ff5252; }
-        .box-title {
-            font-size: 10px;
-            color: #8a99ad;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .box-value {
-            font-size: 18px;
-            font-weight: bold;
-            margin-top: 4px;
-        }
-
-        .trend-card {
-            background: #171f2d;
-            border-radius: 12px;
-            padding: 10px 12px;
-            margin-bottom: 12px;
-            border: 1px solid #232f44;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .trend-title {
-            font-size: 11px;
-            color: #8a99ad;
-            text-transform: uppercase;
-        }
-        .trend-badge {
+            border: 1px solid #d1d5db;
+            background: #fff;
             font-size: 12px;
-            font-weight: bold;
-            padding: 4px 8px;
-            border-radius: 6px;
+            outline: none;
+            color: #374151;
         }
-        .badge-up { color: #00e676; background: rgba(0, 230, 118, 0.15); }
-        .badge-down { color: #ff5252; background: rgba(255, 82, 82, 0.15); }
-
-        .timer-container {
-            background: #171f2d;
-            border-radius: 12px;
-            padding: 10px 12px;
-            margin-bottom: 12px;
-            border: 1px solid #232f44;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .timer-val {
-            font-size: 16px;
-            font-weight: bold;
-            color: #ffb74d;
-        }
-
-        .alert-warning {
-            background: rgba(255, 82, 82, 0.1);
-            border: 1px solid #ff5252;
-            color: #ff5252;
-            border-radius: 10px;
-            padding: 8px;
-            margin-bottom: 12px;
-            font-size: 11px;
-            text-align: center;
-            font-weight: bold;
-        }
-
-        .votes-container {
-            background: #171f2d;
-            border-radius: 12px;
-            padding: 12px;
-            margin-bottom: 12px;
-            border: 1px solid #232f44;
-        }
-        .votes-header {
-            font-size: 11px;
-            color: #8a99ad;
-            text-transform: uppercase;
-            margin-bottom: 10px;
-            text-align: left;
-            font-weight: bold;
-        }
-        .votes-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-        }
-        .vote-item {
-            background: #111723;
-            padding: 6px 10px;
-            border-radius: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 11px;
-        }
-        .vote-status {
-            font-weight: bold;
-            font-size: 10px;
-            padding: 2px 6px;
-            border-radius: 4px;
-        }
-        .status-call { color: #00e676; background: rgba(0, 230, 118, 0.1); }
-        .status-put { color: #ff5252; background: rgba(255, 82, 82, 0.1); }
-        .status-neutral { color: #ffb74d; background: rgba(255, 183, 77, 0.1); }
-
-        .progress-wrapper {
-            margin-top: 10px;
-        }
-        .progress-bar {
-            height: 6px;
-            background: #ff5252;
-            border-radius: 4px;
-            overflow: hidden;
-            display: flex;
-        }
-        .progress-fill {
-            height: 100%;
-            background: #00e676;
-            width: 50%;
-            transition: width 0.5s ease;
-        }
-        .progress-labels {
-            display: flex;
-            justify-content: space-between;
-            font-size: 10px;
-            margin-top: 4px;
-            font-weight: bold;
-        }
-
-        .history-container {
-            background: #171f2d;
-            border-radius: 12px;
-            padding: 12px;
-            margin-bottom: 12px;
-            border: 1px solid #232f44;
-        }
-        .history-list {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            margin-top: 8px;
-            max-height: 100px;
-            overflow-y: auto;
-        }
-        .history-item {
-            display: flex;
-            justify-content: space-between;
-            font-size: 11px;
-            background: #111723;
-            padding: 5px 8px;
-            border-radius: 6px;
-        }
-
-        .btn {
-            background-color: #00e676;
-            color: #0b0d12;
+        .scan-btn {
+            background: #2563eb;
+            color: #fff;
             border: none;
             padding: 12px;
-            width: 100%;
-            border-radius: 10px;
-            font-size: 14px;
-            font-weight: bold;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 13px;
             cursor: pointer;
-            transition: 0.3s;
+            transition: background 0.2s;
         }
-        .btn:disabled {
-            background-color: #2a364f;
-            color: #64748b;
-            cursor: not-allowed;
+        .scan-btn:hover { background: #1d4ed8; }
+        .scan-btn:disabled { background: #9ca3af; cursor: not-allowed; }
+
+        .footer-nav {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px solid #f3f4f6;
+            font-size: 10px;
+            color: #9ca3af;
+            text-align: center;
         }
+        .nav-item { cursor: pointer; }
+        .nav-item.active { color: #2563eb; font-weight: bold; }
     </style>
 </head>
 <body>
 
-<div class="card">
-    <h2>JAAJA-BOT PRO</h2>
-    <p class="subtitle">Anti-Reversal OTC Protection Engine</p>
+<div class="terminal-card">
+    <div class="header">
+        <h1>NEURO<span>BOT</span></h1>
+        <p>AI Signal Terminal v2.0</p>
+        <div class="pair-badge" id="pairDisplay">CAD/CHF (OTC) • 5s</div>
+    </div>
 
-    <!-- OTC Pair Selection -->
-    <div class="form-group">
-        <label>Select OTC Pair (Dooro Lacagta):</label>
-        <select id="asset">
+    <!-- Dynamic Signal Box -->
+    <div class="signal-box down" id="signalBox">
+        <div class="signal-icon" id="signalIcon">↓</div>
+        <div class="signal-text" id="signalTitle">Your signal is DOWN</div>
+    </div>
+
+    <!-- Signal Metrics -->
+    <div class="details-list">
+        <div class="detail-item">
+            <span class="detail-label">📊 Pair</span>
+            <span class="detail-value" id="pairVal">CAD/CHF (OTC)</span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">📈 Trend</span>
+            <span class="detail-value" id="trendVal">Breakdown</span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">🔷 Pattern</span>
+            <span class="detail-value" id="patternVal">Shooting Star</span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">⏱️ Expiry</span>
+            <span class="detail-value" id="expiryVal">5s / 1m</span>
+        </div>
+        <div class="detail-item confidence-wrapper">
+            <div style="display:flex; justify-content:space-between; width:100%;">
+                <span class="detail-label">🎯 Confidence</span>
+                <span class="detail-value" id="confidenceVal">88%</span>
+            </div>
+            <div class="confidence-bar-bg" style="width:100%;">
+                <div class="confidence-fill" id="confidenceFill" style="width: 88%;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Reason Analysis -->
+    <div class="reason-box">
+        <div class="reason-title">💬 Reason</div>
+        <div id="reasonText">Bearish RSI divergence - price up, RSI down</div>
+    </div>
+
+    <!-- Control Inputs -->
+    <div class="controls">
+        <select id="assetSelect">
+            <option value="CAD/CHF (OTC)">CAD/CHF (OTC)</option>
             <option value="EUR/USD (OTC)">EUR/USD (OTC)</option>
             <option value="GBP/USD (OTC)">GBP/USD (OTC)</option>
             <option value="USD/JPY (OTC)">USD/JPY (OTC)</option>
-            <option value="AUD/USD (OTC)">AUD/USD (OTC)</option>
-            <option value="USD/CAD (OTC)">USD/CAD (OTC)</option>
-            <option value="USD/CHF (OTC)">USD/CHF (OTC)</option>
-            <option value="NZD/USD (OTC)">NZD/USD (OTC)</option>
-            <option value="EUR/GBP (OTC)">EUR/GBP (OTC)</option>
-            <option value="EUR/JPY (OTC)">EUR/JPY (OTC)</option>
-            <option value="GBP/JPY (OTC)">GBP/JPY (OTC)</option>
             <option value="BTC/USD (Crypto)">BTC/USD (Crypto)</option>
         </select>
-    </div>
 
-    <!-- Manual Market Filter Override -->
-    <div class="form-group">
-        <label>Main Chart Trend (Geesa Suuqu U Socdo):</label>
-        <select id="manualTrend">
-            <option value="AUTO">Auto Detect Trend</option>
-            <option value="DOWNTREND">🔴 Strong Downtrend (SELL Only)</option>
-            <option value="UPTREND">🟢 Strong Uptrend (BUY Only)</option>
+        <select id="manualTrendSelect">
+            <option value="AUTO">Auto Detect Market</option>
+            <option value="DOWN">🔴 Downtrend (Force DOWN Signals)</option>
+            <option value="UP">🟢 Uptrend (Force UP Signals)</option>
         </select>
+
+        <button class="scan-btn" id="scanBtn" onclick="generateNeuroSignal()">ANALYZE MARKET</button>
     </div>
 
-    <!-- Candle Timer -->
-    <div class="timer-container">
-        <span class="trend-title">Candle Timer (M1):</span>
-        <span class="timer-val" id="candleTimer">00:60</span>
+    <!-- Terminal Nav Bar -->
+    <div class="footer-nav">
+        <div class="nav-item active">📊 Signals</div>
+        <div class="nav-item">🎓 Education</div>
+        <div class="nav-item">🏆 Leaders</div>
+        <div class="nav-item">⭐ Reviews</div>
+        <div class="nav-item">❓ FAQ</div>
     </div>
-
-    <!-- Active Trend Badge -->
-    <div class="trend-card">
-        <span class="trend-title">Filtered Trend:</span>
-        <span class="trend-badge badge-up" id="detectedTrend">SCANNING...</span>
-    </div>
-
-    <!-- Safety Warning -->
-    <div class="alert-warning">
-        ⚠️ RULE: Never trade against strong OTC candle momentum!
-    </div>
-
-    <!-- Direction & Duration -->
-    <div class="grid-2">
-        <div class="box">
-            <div class="box-title">Duration</div>
-            <div class="box-value" id="durationText">1 Minute</div>
-        </div>
-        <div class="box red" id="directionBox">
-            <div class="box-title">Direction</div>
-            <div class="box-value" id="directionText" style="color: #ff5252;">WAIT</div>
-        </div>
-    </div>
-
-    <!-- Price & Confidence -->
-    <div class="grid-2">
-        <div class="box green">
-            <div class="box-title">$ Price</div>
-            <div class="box-value" id="currentPrice">1.13730</div>
-        </div>
-        <div class="box">
-            <div class="box-title">Signal Accuracy</div>
-            <div class="box-value" id="confidenceText">98%</div>
-        </div>
-    </div>
-
-    <!-- Indicator Votes Section -->
-    <div class="votes-container">
-        <div class="votes-header">Indicator Trend Alignment</div>
-        <div class="votes-grid" id="votesGrid">
-            <div class="vote-item"><span>EMA Trend</span><span class="vote-status status-neutral">-</span></div>
-            <div class="vote-item"><span>RSI Momentum</span><span class="vote-status status-neutral">-</span></div>
-            <div class="vote-item"><span>MACD Signal</span><span class="vote-status status-neutral">-</span></div>
-            <div class="vote-item"><span>Bollinger Vol</span><span class="vote-status status-neutral">-</span></div>
-            <div class="vote-item"><span>Stochastic</span><span class="vote-status status-neutral">-</span></div>
-            <div class="vote-item"><span>Price Action</span><span class="vote-status status-neutral">-</span></div>
-            <div class="vote-item"><span>Structure</span><span class="vote-status status-neutral">-</span></div>
-            <div class="vote-item"><span>No-Reversal Filter</span><span class="vote-status status-neutral">-</span></div>
-        </div>
-
-        <!-- Progress Bar -->
-        <div class="progress-wrapper">
-            <div class="progress-bar">
-                <div class="progress-fill" id="progressFill"></div>
-            </div>
-            <div class="progress-labels">
-                <span style="color: #00e676;" id="callCount">CALL 0</span>
-                <span style="color: #ff5252;" id="putCount">PUT 0</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- Signal History Log -->
-    <div class="history-container">
-        <div class="votes-header">Recent Signal History</div>
-        <div class="history-list" id="historyList">
-            <div style="font-size: 10px; color: #64748b; text-align: center;">No signals generated yet</div>
-        </div>
-    </div>
-
-    <button class="btn" id="analyzeBtn" onclick="generateAutoTrendSignal()">AUTO-SCAN SAFE SIGNAL</button>
 </div>
 
 <script>
-    setInterval(() => {
-        const now = new Date();
-        const seconds = 60 - now.getSeconds();
-        const formatted = seconds < 10 ? "0" + seconds : seconds;
-        document.getElementById("candleTimer").innerText = "00:" + formatted;
-    }, 1000);
+    const patternsUp = ["Morning Star", "Bullish Engulfing", "Hammer Reversal", "Volume Spike Green"];
+    const patternsDown = ["Shooting Star", "Bearish Engulfing", "Hanging Man", "Volume Spike Red"];
 
-    function playAudioBeep(type) {
-        try {
-            const ctx = new (window.AudioContext || window.webkitAudioContext)();
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-            osc.connect(gain);
-            gain.connect(ctx.destination);
-            
-            if (type === 'CALL') {
-                osc.frequency.setValueAtTime(600, ctx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.3);
-            } else {
-                osc.frequency.setValueAtTime(800, ctx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(300, ctx.currentTime + 0.3);
-            }
-            osc.start();
-            osc.stop(ctx.currentTime + 0.3);
-        } catch (e) {
-            console.log("Audio play blocked");
-        }
-    }
+    const reasonsUp = [
+        "Bullish RSI divergence — price down, RSI up",
+        "Breakout above Key Resistance Level",
+        "Volume spike on green candle",
+        "EMA 20 Golden Crossover"
+    ];
 
-    function generateAutoTrendSignal() {
-        const btn = document.getElementById("analyzeBtn");
+    const reasonsDown = [
+        "Bearish RSI divergence — price up, RSI down",
+        "Breakdown below Support Level",
+        "Strong selling pressure at rejection zone",
+        "EMA 20 Death Cross Alignment"
+    ];
+
+    function generateNeuroSignal() {
+        const btn = document.getElementById("scanBtn");
         btn.disabled = true;
-        btn.innerText = "SCANNING MOMENTUM...";
+        btn.innerText = "ANALYZING NEURAL DATA...";
 
         setTimeout(() => {
-            const now = new Date();
-            const selectedManual = document.getElementById("manualTrend").value;
-            let isUptrend = false;
-
-            if (selectedManual === "DOWNTREND") {
-                isUptrend = false;
-            } else if (selectedManual === "UPTREND") {
-                isUptrend = true;
-            } else {
-                const timeVal = now.getMinutes() + now.getSeconds();
-                const pairVal = document.getElementById("asset").value.length;
-                isUptrend = (timeVal + pairVal) % 2 === 0;
-            }
-
-            const trendBadge = document.getElementById("detectedTrend");
-            if (isUptrend) {
-                trendBadge.innerText = "🟢 OTC UPTREND";
-                trendBadge.className = "trend-badge badge-up";
-            } else {
-                trendBadge.innerText = "🔴 OTC DOWNTREND";
-                trendBadge.className = "trend-badge badge-down";
-            }
-
-            document.getElementById("durationText").innerText = "1 Minute";
-
-            const basePrice = (Math.random() * (1.13900 - 1.13500) + 1.13500).toFixed(5);
-            document.getElementById("currentPrice").innerText = basePrice;
-
-            const strength = (Math.random() * (99 - 97) + 97).toFixed(0);
-            document.getElementById("confidenceText").innerText = strength + "%";
-
-            let callVotes = 0;
-            let putVotes = 0;
-            const indicators = ["EMA Trend", "RSI Momentum", "MACD Signal", "Bollinger Vol", "Stochastic", "Price Action", "Structure", "No-Reversal Filter"];
-            let votesHTML = "";
-
-            indicators.forEach(ind => {
-                let voteType = isUptrend ? "CALL" : "PUT";
-
-                if (voteType === "CALL") {
-                    callVotes++;
-                    status = `<span class="vote-status status-call">▲ CALL</span>`;
-                } else {
-                    putVotes++;
-                    status = `<span class="vote-status status-put">▼ PUT</span>`;
-                }
-
-                votesHTML += `<div class="vote-item"><span>${ind}</span>${status}</div>`;
-            });
-
-            document.getElementById("votesGrid").innerHTML = votesHTML;
-
-            const totalVotes = callVotes + putVotes;
-            const callPercent = (callVotes / totalVotes) * 100;
-            document.getElementById("progressFill").style.width = callPercent + "%";
-            document.getElementById("callCount").innerText = "CALL " + callVotes;
-            document.getElementById("putCount").innerText = "PUT " + putVotes;
-
-            const dirBox = document.getElementById("directionBox");
-            const dirText = document.getElementById("directionText");
-            const assetName = document.getElementById("asset").value;
-
-            let signalDir = "";
-            if (isUptrend) {
-                signalDir = "CALL";
-                dirText.innerText = "CALL";
-                dirText.style.color = "#00e676";
-                dirBox.style.borderLeftColor = "#00e676";
-                playAudioBeep('CALL');
-            } else {
-                signalDir = "PUT";
-                dirText.innerText = "PUT";
-                dirText.style.color = "#ff5252";
-                dirBox.style.borderLeftColor = "#ff5252";
-                playAudioBeep('PUT');
-            }
-
-            const historyList = document.getElementById("historyList");
-            const timeString = now.getHours() + ":" + (now.getMinutes()<10?'0':'') + now.getMinutes();
-            const newHistory = `<div class="history-item">
-                <span>${timeString} - <strong>${assetName}</strong></span>
-                <span style="color: ${isUptrend ? '#00e676' : '#ff5252'}; font-weight:bold;">${signalDir} (${strength}%)</span>
-            </div>`;
+            const asset = document.getElementById("assetSelect").value;
+            const manualTrend = document.getElementById("manualTrendSelect").value;
             
-            if (historyList.innerHTML.includes("No signals generated yet")) {
-                historyList.innerHTML = newHistory;
+            let isUp = false;
+            if (manualTrend === "UP") {
+                isUp = true;
+            } else if (manualTrend === "DOWN") {
+                isUp = false;
             } else {
-                historyList.innerHTML = newHistory + historyList.innerHTML;
+                isUp = Math.random() > 0.5;
+            }
+
+            const signalBox = document.getElementById("signalBox");
+            const signalIcon = document.getElementById("signalIcon");
+            const signalTitle = document.getElementById("signalTitle");
+            
+            document.getElementById("pairDisplay").innerText = asset + " • 5s/1m";
+            document.getElementById("pairVal").innerText = asset;
+
+            const confidence = Math.floor(Math.random() * (98 - 82 + 1)) + 82;
+            document.getElementById("confidenceVal").innerText = confidence + "%";
+            document.getElementById("confidenceFill").style.width = confidence + "%";
+
+            if (isUp) {
+                signalBox.className = "signal-box up";
+                signalIcon.innerText = "↑";
+                signalTitle.innerText = "Your signal is UP";
+                document.getElementById("trendVal").innerText = "Uptrend Continuation";
+                document.getElementById("patternVal").innerText = patternsUp[Math.floor(Math.random() * patternsUp.length)];
+                document.getElementById("reasonText").innerText = reasonsUp[Math.floor(Math.random() * reasonsUp.length)];
+            } else {
+                signalBox.className = "signal-box down";
+                signalIcon.innerText = "↓";
+                signalTitle.innerText = "Your signal is DOWN";
+                document.getElementById("trendVal").innerText = "Breakdown";
+                document.getElementById("patternVal").innerText = patternsDown[Math.floor(Math.random() * patternsDown.length)];
+                document.getElementById("reasonText").innerText = reasonsDown[Math.floor(Math.random() * reasonsDown.length)];
             }
 
             btn.disabled = false;
-            btn.innerText = "AUTO-SCAN SAFE SIGNAL";
-        }, 1500);
+            btn.innerText = "ANALYZE MARKET";
+        }, 1200);
     }
 </script>
 
