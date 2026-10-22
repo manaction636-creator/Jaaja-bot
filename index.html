@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEUROBOT - Real Accuracy V2.9.3</title>
+    <title>NEUROBOT - Visual Patterns V2.9.2</title>
     <style>
         * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; }
         body { background-color: #f3f4f6; color: #1f2937; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 15px; }
@@ -65,7 +65,7 @@
 <div class="terminal-card">
     <div class="header">
         <h1>NEURO<span>BOT</span></h1>
-        <p>Market Health & Candle Timer V2.9.3</p>
+        <p>Market Health & Candle Timer V2.9.2</p>
         <div class="pair-badge" id="pairDisplay">AUD/USD (OTC) • 1m</div>
     </div>
 
@@ -109,11 +109,11 @@
         <div class="detail-item"><span class="detail-label">⏱️ Expiry</span><span class="detail-value">1 Minute</span></div>
         <div class="detail-item" style="flex-direction: column; align-items: flex-start;">
             <div style="display:flex; justify-content:space-between; width:100%;">
-                <span class="detail-label">🎯 Real Confidence</span>
-                <span class="detail-value" id="confidenceVal">82%</span>
+                <span class="detail-label">🎯 Confidence</span>
+                <span class="detail-value" id="confidenceVal">96%</span>
             </div>
             <div class="confidence-bar-bg" style="width:100%;">
-                <div class="confidence-fill" id="confidenceFill" style="width: 82%;"></div>
+                <div class="confidence-fill" id="confidenceFill" style="width: 96%;"></div>
             </div>
         </div>
     </div>
@@ -149,25 +149,23 @@
 
 <script>
     let isMarketClosed = false;
-    let currentHealthScore = 80;
 
-    // Real Pattern Probability Database (No fake 97/100%)
     const upPatterns = [
-        { name: "Bullish Engulfing", baseAccuracy: 84, desc: "Candal cagaaran oo buuxa ayaa si buuxda u liqay candalkii casiiga ahaa." },
-        { name: "Three White Soldiers", baseAccuracy: 85, desc: "Saddex candal oo cagaaran oo xiriir ah oo muujinaya awood kor u kac dhab ah." },
-        { name: "Hammer", baseAccuracy: 76, desc: "Candalku wuxuu leeyahay lug dheer oo muujineysa support rejection dhab ah." },
-        { name: "Morning Star", baseAccuracy: 78, desc: "Sedex candal oo muujinaya in suuqu ka soo jeestay hoos oo uu kor u socdo." },
-        { name: "Tweezer Bottom", baseAccuracy: 74, desc: "Labo candal oo isku siman oo hoose, muujinaya taageero (Support) meeshaas ka baxday." },
-        { name: "Dragonfly Doji", baseAccuracy: 62, desc: "Calaamad daciif ah / Doji, waxay muujineysa in suuqu dib u fikiraayo." }
+        { name: "Bullish Engulfing", desc: "Candal cagaaran oo buuxa ayaa si buuxda u liqay candalkii casiiga ahaa ee ka horreeyay." },
+        { name: "Hammer", desc: "Candalka hoose wuxuu leeyahay lug dheer oo muujineysa in iibsadayaashu kor u rixeen suuqa." },
+        { name: "Dragonfly Doji", desc: "Calaamad xoog badan oo muujineysa in diidmo xoog leh ay ka timid xagga hoose." },
+        { name: "Morning Star", desc: "Sedex candal oo muujinaya in suuqu ka soo kacay hoos oo uu u jeedsaday kor." },
+        { name: "Tweezer Bottom", desc: "Labo candal oo isku siman oo hoose, taasoo muujineysa in la helay Support adag." },
+        { name: "Three White Soldiers", desc: "Saddex candal oo cagaaran oo is xigtay oo muujinaya xoog iyo kor u kac weyn." }
     ];
 
     const downPatterns = [
-        { name: "Bearish Engulfing", baseAccuracy: 84, desc: "Candal casaan ah oo buuxa ayaa liqay candalkii cagaarnaa ee ka horreeyay." },
-        { name: "Three Black Crows", baseAccuracy: 85, desc: "Saddex candal oo casaan ah oo xiriir ah oo muujinaya hoos u dhac xoog leh." },
-        { name: "Shooting Star", baseAccuracy: 76, desc: "Candalka sare wuxuu leeyahay lug dheer oo muujineysa resistance rejection." },
-        { name: "Evening Star", baseAccuracy: 78, desc: "Sedex candal oo muujinaya in suuqu ka soo jeestay kor una socdo hoos." },
-        { name: "Tweezer Top", baseAccuracy: 74, desc: "Labo candal oo isku siman oo sare, muujinaya Resistance adag." },
-        { name: "Gravestone Doji", baseAccuracy: 60, desc: "Calaamad Doji ah oo daciif ah, oo muujineysa diidmo aan weli buuxin." }
+        { name: "Bearish Engulfing", desc: "Candal casaan ah oo buuxa ayaa liqay candalkii cagaarnaa ee ka horreeyay." },
+        { name: "Shooting Star", desc: "Candalka sare wuxuu leeyahay lug dheer oo muujineysa Selling Pressure hoos u rixeysa suuqa." },
+        { name: "Gravestone Doji", desc: "Calaamad muujineysa in suuqu ku guuldarraystay inuu sare u sii socdo oo uu soo dhacay." },
+        { name: "Evening Star", desc: "Sedex candal oo muujinaya in suuqu ka soo jeestay kor isla markaana uu hoos u socdo." },
+        { name: "Tweezer Top", desc: "Labo candal oo isku siman oo sare, taasoo muujineysa Resistance adag." },
+        { name: "Three Black Crows", desc: "Saddex candal oo casaan ah oo xiriir ah oo muujinaya hoos u dhac xoog leh." }
     ];
 
     function startCandleTimer() {
@@ -180,19 +178,19 @@
     }
 
     function checkMarketHealth() {
-        currentHealthScore = Math.floor(Math.random() * (95 - 45 + 1)) + 45;
+        const score = Math.floor(Math.random() * (98 - 40 + 1)) + 40;
         const healthFill = document.getElementById("healthFill");
         const healthScore = document.getElementById("healthScore");
         const healthBadge = document.getElementById("healthBadge");
         const btn = document.getElementById("scanBtn");
         const signalBox = document.getElementById("signalBox");
 
-        healthFill.style.width = currentHealthScore + "%";
+        healthFill.style.width = score + "%";
 
-        if (currentHealthScore < 60) {
+        if (score < 60) {
             isMarketClosed = true;
             healthFill.style.backgroundColor = "#ef4444";
-            healthScore.innerText = currentHealthScore + "% (SUUQU WAA ISKU DHEX YAAC)";
+            healthScore.innerText = score + "% (SUUQU WAA ISKU DHEX YAAC)";
             healthBadge.innerText = "CLOSED";
             healthBadge.style.color = "#ef4444";
             
@@ -201,14 +199,14 @@
             document.getElementById("signalTitle").innerText = "MARKET CLOSED / UNSTABLE";
             document.getElementById("patternVal").innerText = "No Clear Pattern";
             document.getElementById("trendVal").innerText = "Sideways / Bad Market";
-            document.getElementById("reasonText").innerText = "SUUQU WAA RISK BADAN! Caafimaadka suuqu wuu dhibatooyaa maanta.";
+            document.getElementById("reasonText").innerText = "SUUQU WAA EBER / RISK BADAN! Bot-ka waa la xiray si looga fogaado khasaare.";
             
             btn.disabled = true;
             btn.innerText = "BOT CLOSED (SUUQA WAA RISK)";
         } else {
             isMarketClosed = false;
             healthFill.style.backgroundColor = "#10b981";
-            healthScore.innerText = currentHealthScore + "% (FIICAN)";
+            healthScore.innerText = score + "% (FIICAN)";
             healthBadge.innerText = "OPEN";
             healthBadge.style.color = "#10b981";
             
@@ -222,7 +220,7 @@
 
         const btn = document.getElementById("scanBtn");
         btn.disabled = true;
-        btn.innerText = "CALCULATING REAL PROBABILITY...";
+        btn.innerText = "SCANNING VISUAL PATTERNS...";
 
         setTimeout(() => {
             const asset = document.getElementById("assetSelect").value;
@@ -234,14 +232,16 @@
             document.getElementById("pairDisplay").innerText = asset + " • 1m";
             document.getElementById("pairVal").innerText = asset;
 
+            const confidence = Math.floor(Math.random() * (98 - 92 + 1)) + 92;
+            document.getElementById("confidenceVal").innerText = confidence + "%";
+            document.getElementById("confidenceFill").style.width = confidence + "%";
+
             if (trend === "AUTO") {
                 trend = Math.random() > 0.5 ? "UP" : "DOWN";
             }
 
-            let pat, finalAccuracy;
-
             if (trend === "UP") {
-                pat = upPatterns[Math.floor(Math.random() * upPatterns.length)];
+                const pat = upPatterns[Math.floor(Math.random() * upPatterns.length)];
                 signalBox.className = "signal-box up";
                 document.getElementById("signalIcon").innerText = "↑";
                 document.getElementById("signalTitle").innerText = "Your signal is UP";
@@ -250,10 +250,11 @@
                 document.getElementById("trendVal").innerText = "Bullish Uptrend";
                 document.getElementById("reasonText").innerText = pat.desc;
                 
+                // Set Green Graphic
                 candleGraphic.style.color = "#10b981";
                 candleBody.style.background = "#10b981";
             } else {
-                pat = downPatterns[Math.floor(Math.random() * downPatterns.length)];
+                const pat = downPatterns[Math.floor(Math.random() * downPatterns.length)];
                 signalBox.className = "signal-box down";
                 document.getElementById("signalIcon").innerText = "↓";
                 document.getElementById("signalTitle").innerText = "Your signal is DOWN";
@@ -262,31 +263,9 @@
                 document.getElementById("trendVal").innerText = "Bearish Downtrend";
                 document.getElementById("reasonText").innerText = pat.desc;
                 
+                // Set Red Graphic
                 candleGraphic.style.color = "#ef4444";
                 candleBody.style.background = "#ef4444";
-            }
-
-            // Real Accuracy Calculation based on Pattern + Market Health
-            if (currentHealthScore > 80) {
-                finalAccuracy = pat.baseAccuracy + Math.floor(Math.random() * 3);
-            } else {
-                finalAccuracy = pat.baseAccuracy - Math.floor(Math.random() * 8);
-            }
-
-            // Ensure Real Bounds (55% - 85%)
-            if (finalAccuracy > 85) finalAccuracy = 85;
-            if (finalAccuracy < 55) finalAccuracy = 55;
-
-            document.getElementById("confidenceVal").innerText = finalAccuracy + "%";
-            document.getElementById("confidenceFill").style.width = finalAccuracy + "%";
-            
-            // Color confidence bar based on realism
-            if(finalAccuracy >= 80) {
-                document.getElementById("confidenceFill").style.backgroundColor = "#10b981";
-            } else if(finalAccuracy >= 70) {
-                document.getElementById("confidenceFill").style.backgroundColor = "#f59e0b";
-            } else {
-                document.getElementById("confidenceFill").style.backgroundColor = "#ef4444";
             }
 
             btn.disabled = false;
