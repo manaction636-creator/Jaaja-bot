@@ -279,20 +279,29 @@
 
     startCandleTimer();
     checkMarketHealth();
-    // Xasuusnow pair-kii ugu dambeeyay ee la doortay
-const savedPair = localStorage.getItem("selectedPair");
-const pairSelect = document.getElementById("pairSelect");
+        // Xasuusnow pair-kii ugu dambeeyay ee la doortay
+    const savedPair = localStorage.getItem("selectedPair");
+    const pairSelect = document.getElementById("pairSelect");
 
+    if (savedPair && pairSelect) {
+        pairSelect.value = savedPair;
+        // Dib u cusboonaysii qoraallada display-ga marka boggu furmo
+        if (typeof updatePairDisplay === "function") {
+            updatePairDisplay();
+        } else {
+            const pairDisplay = document.getElementById("pairDisplay");
+            const pairVal = document.getElementById("pairVal");
+            if (pairDisplay) pairDisplay.innerText = savedPair + " • 1m";
+            if (pairVal) pairVal.innerText = savedPair;
+        }
+    }
 
-if (savedPair && pairSelect) {
-    pairSelect.value = savedPair;
-}
+    if (pairSelect) {
+        pairSelect.addEventListener("change", function() {
+            localStorage.setItem("selectedPair", this.value);
+        });
+    }
 
-if (pairSelect) {
-    pairSelect.addEventListener("change", function() {
-        localStorage.setItem("selectedPair", this.value);
-    });
-}
 
     </script>
 
