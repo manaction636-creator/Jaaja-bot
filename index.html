@@ -281,7 +281,8 @@
     checkMarketHealth();
     // Xasuusnow pair-kii ugu dambeeyay ee la doortay
 const savedPair = localStorage.getItem("selectedPair");
-const pairSelect = document.getElementById("pairVal");
+const pairSelect = document.getElementById("pairSelect");
+
 
 if (savedPair && pairSelect) {
     pairSelect.value = savedPair;
