@@ -1,4 +1,4 @@
-8<!DOCTYPE html>
+ĥ8<!DOCTYPE html>
 <html lang="so">
 <head>
     <meta charset="UTF-8">
@@ -279,6 +279,20 @@
 
     startCandleTimer();
     checkMarketHealth();
+    // Xasuusnow pair-kii ugu dambeeyay ee la doortay
+const savedPair = localStorage.getItem("selectedPair");
+const pairSelect = document.getElementById("pairVal");
+
+if (savedPair && pairSelect) {
+    pairSelect.value = savedPair;
+}
+
+if (pairSelect) {
+    pairSelect.addEventListener("change", function() {
+        localStorage.setItem("selectedPair", this.value);
+    });
+}
+
     </script>
 
 </body>
