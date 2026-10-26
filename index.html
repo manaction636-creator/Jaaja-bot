@@ -331,20 +331,37 @@
             updatePairDisplay();
         } else {
             const pairDisplay = document.getElementById("pairDisplay");
-            const pairVal = document.getElementById("pairVal");
-            if (pairDisplay) pairDisplay.innerText = savedPair + " • 1m";
-            if (pairVal) pairVal.innerText = savedPair;
-        }
+            // --- NeuroBot Timer Sync ---
+class NeuroBotTimerSync {
+    constructor(targetInterval = 60) {
+        this.targetInterval = targetInterval;
     }
 
-    if (pairSelect) {
-        pairSelect.addEventListener("change", function() {
-            localStorage.setItem("selectedPair", this.value);
-        });
+    getExactCandleTimer() {
+        const currentTime = Date.now() / 1000;
+        const elapsedSeconds = currentTime % this.targetInterval;
+        return Math.floor(this.targetInterval - elapsedSeconds);
     }
 
+    initSync() {
+        setInterval(() => {
+            const timer = this.getExactCandleTimer();
+            const timerElement = document.getElementById("candleTimer") || document.querySelector(".candle-timer");
+            if (timerElement) {
+                timerElement.innerText = `00:${timer < 10 ? '0' : ''}${timer}`;
+            }
+        }, 1000);
+    }
+}
 
-    </script>
+document.addEventListener("DOMContentLoaded", () => {
+    const botSync = new NeuroBotTimerSync(60);
+    botSync.initSync();
+});
 
+
+
+
+    </script>   
 </body>
 </html>
