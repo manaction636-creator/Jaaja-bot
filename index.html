@@ -318,43 +318,7 @@
         }, 1000);
     }
 
-    startCandleTimer();
-    checkMarketHealth();
-        // Xasuusnow pair-kii ugu dambeeyay ee la doortay
-    const savedPair = localStorage.getItem("selectedPair");
-    const pairSelect = document.getElementById("pairSelect");
-
-    if (savedPair && pairSelect) {
-        pairSelect.value = savedPair;
-        // Dib u cusboonaysii qoraallada display-ga marka boggu furmo
-        if (typeof updatePairDisplay === "function") {
-            updatePairDisplay();
-        } else {
-            const pairDisplay = document.getElementById("pairDisplay");
-            // --- NeuroBot Timer Sync ---
-class NeuroBotTimerSync {
-    constructor(targetInterval = 60) {
-        this.targetInterval = targetInterval;
-    }
-
-    getExactCandleTimer() {
-        const currentTime = Date.now() / 1000;
-        const elapsedSeconds = currentTime % this.targetInterval;
-        return Math.floor(this.targetInterval - elapsedSeconds);
-    }
-
-    initSync() {
-        setInterval(() => {
-            const timer = this.getExactCandleTimer();
-            const timerElement = document.getElementById("candleTimer") || document.querySelector(".candle-timer");
-            if (timerElement) {
-                timerElement.innerText = `00:${timer < 10 ? '0' : ''}${timer}`;
-            }
-        }, 1000);
-    }
-
-});
-
+    
 
 
 
