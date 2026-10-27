@@ -125,10 +125,10 @@
     <div class="controls">
         <label style="font-size: 11px; font-weight: bold; color: #6b7280;">1. Dooro OTC Pair:</label>
         <select id="assetSelect" onchange="checkMarketHealth()">
-         <!-- Controls -->
-<div class="controls">
-    <label style="font-size: 11px; font-weight: bold; color: #6b7280;">1. Dooro OTC Pair (Quotex/Pocket List)</label>
-    <select id="assetSelect" onchange="checkMarketHealth()">
+        <option value="CAD/CHF (OTC)">CAD/CHF (OTC)</option>
+        <option value="EUR/USD (OTC)">EUR/USD (OTC)</option>
+        <option value="GBP/USD (OTC)">GBP/USD (OTC)</option>
+        <option value="USD/JPY (OTC)">USD/JPY (OTC)</option>
         <option value="USD/MXN (OTC)">USD/MXN (OTC)</option>
         <option value="USD/PKR (OTC)">USD/PKR (OTC)</option>
         <option value="NZD/USD (OTC)">NZD/USD (OTC)</option>
@@ -152,46 +152,8 @@
         <option value="AUD/NZD (OTC)">AUD/NZD (OTC)</option>
         <option value="AUD/USD (OTC)">AUD/USD (OTC)</option>
         <option value="EUR/USD (OTC)">EUR/USD (OTC)</option>
-        <option value="EUR/JPY (OTC)">EUR/JPY (OTC)</option>
-    </select>
+         <option value="EUR/JPY (OTC)">EUR/JPY (OTC)</option>
 
-    <!-- Regular Forex Pairs -->
-    <option value="EUR/JPY">EUR/JPY</option>
-    <option value="AUD/JPY">AUD/JPY</option>
-    <option value="EUR/USD" selected>EUR/USD</option>
-    <option value="GBP/USD">GBP/USD</option>
-    <option value="EUR/AUD">EUR/AUD</option>
-    <option value="AUD/USD">AUD/USD</option>
-    <option value="GBP/JPY">GBP/JPY</option>
-    <option value="USD/CAD">USD/CAD</option>
-    <option value="USD/JPY">USD/JPY</option>
-    <option value="CAD/JPY">CAD/JPY</option>
-    <option value="EUR/CAD">EUR/CAD</option>
-    <option value="EUR/GBP">EUR/GBP</option>
-    <option value="GBP/AUD">GBP/AUD</option>
-    <option value="GBP/CAD">GBP/CAD</option>
-    <option value="USD/CHF">USD/CHF</option>
-    <option value="AUD/CAD">AUD/CAD</option>
-    <option value="AUD/CHF">AUD/CHF</option>
-    <option value="CHF/JPY">CHF/JPY</option>
-    <option value="EUR/CHF">EUR/CHF</option>
-    <option value="GBP/CHF">GBP/CHF</option>
-    </select>
-
-    <label style="font-size: 11px; font-weight: bold; color: #6b7280;">2. Waafaji Trend-ka Suuqa:</label>
-    <select id="manualTrendSelect">
-        <option value="AUTO">⚡ Auto Detect (BUY ama SELL dabiici ah)</option>
-        <option value="DOWN">🔴 Force DOWN (SELL Signals Only)</option>
-        <option value="UP">🟢 Force UP (BUY Signals Only)</option>
-    </select>
-
-    <button class="scan-btn" id="scanBtn" onclick="generateStrictSignal()">ANALYZE & SCAN SIGNAL</button>
-</div>
-
-            <option value="CAD/CHF (OTC)">CAD/CHF (OTC)</option>
-            <option value="EUR/USD (OTC)">EUR/USD (OTC)</option>
-            <option value="GBP/USD (OTC)">GBP/USD (OTC)</option>
-            <option value="USD/JPY (OTC)">USD/JPY (OTC)</option>
         </select>
 
         <label style="font-size: 11px; font-weight: bold; color: #6b7280;">2. Waafaji Trend-ka Quotex:</label>
