@@ -227,20 +227,28 @@
             document.getElementById("confidenceVal").innerText = confidence + "%";
             document.getElementById("confidenceFill").style.width = confidence + "%";
 
-            if (trend === "UP") {
-                signalBox.className = "signal-box up";
-                document.getElementById("signalIcon").innerText = "↑";
-                document.getElementById("signalTitle").innerText = "Your signal is UP";
-                document.getElementById("trendVal").innerText = "Strong Uptrend";
-                document.getElementById("reasonText").innerText = "Signal-ku wuxuu si sax ah u raacay Trend-ka Cagaaran.";
-            } else {
-                signalBox.className = "signal-box down";
-                document.getElementById("signalIcon").innerText = "↓";
-                document.getElementById("signalTitle").innerText = "Your signal is DOWN";
-                document.getElementById("trendVal").innerText = "Strong Downtrend";
-                document.getElementById("reasonText").innerText = "Signal-ku wuxuu si sax ah u raacay Trend-ka Casaanka ah.";
-            }
+    let targetTrend = trend;
+    
+    if (trend === "AUTO") {
+        targetTrend = Math.random() < 0.5 ? "UP" : "DOWN";
+    }
 
+    if (targetTrend === "UP") {
+        signalBox.className = "signal-box up";
+        document.getElementById("signalIcon").innerText = "↑";
+        document.getElementById("signalTitle").innerText = "Your signal is UP";
+        document.getElementById("trendVal").innerText = "Strong Uptrend";
+        document.getElementById("reasonText").innerText = "Signal-ku wuxuu si sax ah u raacay Trend-ka Cagaaran.";
+    } else {
+        signalBox.className = "signal-box down";
+        document.getElementById("signalIcon").innerText = "↓";
+        document.getElementById("signalTitle").innerText = "Your signal is DOWN";
+        document.getElementById("trendVal").innerText = "Strong Downtrend";
+        document.getElementById("reasonText").innerText = "Signal-ku wuxuu si sax ah u raacay Trend-ka Casaanka ah.";
+    }
+
+            
+    
             btn.disabled = false;
             btn.innerText = "ANALYZE & SCAN SIGNAL";
         }, 1000);
