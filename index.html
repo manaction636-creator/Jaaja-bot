@@ -227,27 +227,30 @@
             document.getElementById("confidenceVal").innerText = confidence + "%";
             document.getElementById("confidenceFill").style.width = confidence + "%";
 
-    let targetTrend = trend;
-    
-    if (trend === "AUTO") {
-        targetTrend = Math.random() < 0.5 ? "UP" : "DOWN";
+                let marketHealthScore = parseInt(document.getElementById("healthScore").innerText) || 50;
+    let targetTrend = "";
+    let randomCheck = Math.random();
+
+    if (marketHealthScore > 70 && randomCheck > 0.5) {
+        targetTrend = "UP"; // Dhanka BUY
+    } else {
+        targetTrend = "DOWN"; // Dhanka SELL
     }
 
     if (targetTrend === "UP") {
         signalBox.className = "signal-box up";
         document.getElementById("signalIcon").innerText = "↑";
         document.getElementById("signalTitle").innerText = "Your signal is UP";
-        document.getElementById("trendVal").innerText = "Strong Uptrend";
-        document.getElementById("reasonText").innerText = "Signal-ku wuxuu si sax ah u raacay Trend-ka Cagaaran.";
+        document.getElementById("trendVal").innerText = "Strong Uptrend (BUY)";
+        document.getElementById("reasonText").innerText = "Suuqu wuxuu muujinayaa xoog dhanka kor u kaca ah (BUY).";
     } else {
         signalBox.className = "signal-box down";
         document.getElementById("signalIcon").innerText = "↓";
         document.getElementById("signalTitle").innerText = "Your signal is DOWN";
-        document.getElementById("trendVal").innerText = "Strong Downtrend";
-        document.getElementById("reasonText").innerText = "Signal-ku wuxuu si sax ah u raacay Trend-ka Casaanka ah.";
+        document.getElementById("trendVal").innerText = "Strong Downtrend (SELL)";
+        document.getElementById("reasonText").innerText = "Suuqu wuxuu muujinayaa cadaadis dhanka hoos u dhaca ah (SELL).";
     }
 
-            
     
             btn.disabled = false;
             btn.innerText = "ANALYZE & SCAN SIGNAL";
