@@ -2,55 +2,234 @@
 <html lang="so">
 <head>
   <meta charset="UTF-8">
-  <title>AI Signal Radar Demo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ahmed Macalin Trading Bot</title>
   <style>
-    body { background-color: #0d1117; color: #fff; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; }
-    .card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 20px; width: 300px; text-align: center; }
-    .signal-box { background: #ff2a4b15; border: 2px solid #ff2a4b; padding: 15px; border-radius: 8px; margin-top: 15px; }
-    .signal-title { color: #ff2a4b; font-size: 22px; font-weight: bold; }
-    .timer { font-size: 18px; margin-top: 10px; color: #e6edf3; }
-    .btn { background: #238636; color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; margin-top: 15px; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: #0b0e14;
+      color: #ffffff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .card {
+      background-color: #121824;
+      border: 1px solid #1f293d;
+      border-radius: 16px;
+      padding: 24px;
+      width: 100%;
+      max-width: 360px;
+      text-align: center;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Selection Styles */
+    .control-group {
+      margin-bottom: 16px;
+      text-align: left;
+    }
+
+    .control-label {
+      font-size: 12px;
+      color: #8b949e;
+      margin-bottom: 6px;
+      display: block;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    select {
+      width: 100%;
+      background-color: #1a2332;
+      color: #00e5ff;
+      border: 1px solid #2a384c;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .timeframe-container {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .tf-btn {
+      flex: 1;
+      background-color: #1a2332;
+      border: 1px solid #2a384c;
+      color: #8b949e;
+      padding: 8px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .tf-btn.active {
+      background-color: #0052cc;
+      color: #ffffff;
+      border-color: #0066ff;
+    }
+
+    /* Signal Display */
+    .signal-box {
+      background-color: rgba(255, 42, 75, 0.1);
+      border: 1.5px solid #ff2a4b;
+      border-radius: 12px;
+      padding: 20px 10px;
+      margin-bottom: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .signal-box.call {
+      background-color: rgba(0, 200, 83, 0.1);
+      border-color: #00c853;
+    }
+
+    .signal-title {
+      color: #ff2a4b;
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+
+    .signal-box.call .signal-title {
+      color: #00c853;
+    }
+
+    .timer-text {
+      font-size: 14px;
+      color: #c9d1d9;
+    }
+
+    /* Scan Button */
+    .scan-btn {
+      width: 100%;
+      background-color: #1e7e34;
+      color: #ffffff;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .scan-btn:hover {
+      background-color: #218838;
+    }
   </style>
 </head>
 <body>
 
 <div class="card">
-  <h3>AUD/USD OTC</h3>
-  <div class="signal-box" id="signalCard">
-    <div class="signal-title" id="actionText">SCANNING...</div>
-    <div class="timer" id="timerText">Next Candle: 10s</div>
+  <!-- Asset Selector -->
+  <div class="control-group">
+    <label class="control-label">Dooro Lamaanaha Lacagta</label>
+    <select id="assetSelect" onchange="resetScan()">
+      <option value="AUD/USD OTC">AUD/USD OTC</option>
+      <option value="EUR/USD OTC">EUR/USD OTC</option>
+      <option value="GBP/USD OTC">GBP/USD OTC</option>
+      <option value="USD/JPY OTC">USD/JPY OTC</option>
+      <option value="EUR/GBP OTC">EUR/GBP OTC</option>
+    </select>
   </div>
-  <button class="btn" onclick="forceScan()">Force Scan Now</button>
+
+  <!-- Timeframe Selector -->
+  <div class="control-group">
+    <label class="control-label">Timeframe (Waqtiga Shambada)</label>
+    <div class="timeframe-container">
+      <button class="tf-btn" onclick="setTimeframe(30, this)">30s</button>
+      <button class="tf-btn active" onclick="setTimeframe(60, this)">1m</button>
+      <button class="tf-btn" onclick="setTimeframe(300, this)">5m</button>
+    </div>
+  </div>
+
+  <!-- Signal Box -->
+  <div class="signal-box" id="signalCard">
+    <div class="signal-title" id="actionText">PUT (SELL 🔻)</div>
+    <div class="timer-text" id="timerText">Next Candle: 60s</div>
+  </div>
+
+  <!-- Force Scan Button -->
+  <button class="scan-btn" onclick="forceScan()">Force Scan Now</button>
 </div>
 
 <script>
-  let timeLeft = 10;
+  let selectedTimeframe = 60; // Waqtiga asalka ah: 1m (60s)
+  let timeLeft = selectedTimeframe;
+  let timerInterval = null;
+
   const timerText = document.getElementById('timerText');
   const actionText = document.getElementById('actionText');
+  const signalCard = document.getElementById('signalCard');
 
   function startTimer() {
-    setInterval(() => {
+    if (timerInterval) clearInterval(timerInterval);
+    
+    timerInterval = setInterval(() => {
       if (timeLeft > 0) {
         timeLeft--;
         timerText.innerText = `Next Candle: ${timeLeft}s`;
       } else {
         generateSignal();
-        timeLeft = 30; // Reset saacada
+        timeLeft = selectedTimeframe;
       }
     }, 1000);
   }
 
+  function setTimeframe(seconds, btnElement) {
+    // Badhisaha Timeframe-ka beddel
+    document.querySelectorAll('.tf-btn').forEach(btn => btn.classList.remove('active'));
+    btnElement.classList.add('active');
+
+    selectedTimeframe = seconds;
+    resetScan();
+  }
+
   function generateSignal() {
-    const signals = ['PUT (SELL 🔻)', 'CALL (BUY 🔺)'];
-    const randomSignal = signals[Math.floor(Math.random() * signals.length)];
-    actionText.innerText = randomSignal;
+    const isCall = Math.random() > 0.5;
+    
+    if (isCall) {
+      actionText.innerText = "CALL (BUY 🔺)";
+      signalCard.className = "signal-box call";
+    } else {
+      actionText.innerText = "PUT (SELL 🔻)";
+      signalCard.className = "signal-box";
+    }
   }
 
   function forceScan() {
-    actionText.innerText = "SCANNING MARKET...";
+    actionText.innerText = "SCANNING...";
+    signalCard.className = "signal-box";
     timeLeft = 3;
   }
 
+  function resetScan() {
+    timeLeft = selectedTimeframe;
+    timerText.innerText = `Next Candle: ${timeLeft}s`;
+    generateSignal();
+    startTimer();
+  }
+
+  // Bilow timer-ka marka boggu koodhmo
   startTimer();
 </script>
 
