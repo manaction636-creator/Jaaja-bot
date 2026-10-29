@@ -168,7 +168,7 @@
 
   <div class="signal-box" id="signalCard">
     <div class="signal-title" id="actionText">READY TO SCAN</div>
-    <div class="timer-text" id="timerText">Next Candle: 60s</div>
+    <div class="timer-text" id="timerText">Next Candle: --s</div>
   </div>
 
   <button class="scan-btn" onclick="forceScan()">Force Scan Now</button>
@@ -182,6 +182,7 @@
   const actionText = document.getElementById('actionText');
   const signalCard = document.getElementById('signalCard');
 
+  // Saacaddu waxay kaliya tusaysaa wakhtiga shamcadda (Countdown) ee socda iyadoon signal beddelayn
   function startSyncedTimer() {
     if (timerInterval) clearInterval(timerInterval);
 
@@ -189,9 +190,7 @@
       const now = new Date();
       const totalSeconds = now.getMinutes() * 60 + now.getSeconds();
       
-      // Xisaabinta wakhtiga ka dhiman shamcadda si uu ula jaanqaado Pocket Option
       let timeLeft = selectedTimeframe - (totalSeconds % selectedTimeframe);
-
       timerText.innerText = `Next Candle: ${timeLeft}s`;
     }, 500);
   }
@@ -201,14 +200,17 @@
     btnElement.classList.add('active');
 
     selectedTimeframe = seconds;
+    
+    // Marka timeframe-ka la beddelo, dib ugu celi xaaladda sugitaanka
+    actionText.innerText = "READY TO SCAN";
+    signalCard.className = "signal-box";
   }
 
-  // Halkan waxaa maamulaya adiga oo gujinaya badhanka
+  // Halkan waxaa kaliya oo signal lagu soo saarayaa marka aad adigu gujiso badhanka
   function forceScan() {
     actionText.innerText = "SCANNING...";
     signalCard.className = "signal-box";
     
-    // Wax yar oo hakad ah (animation macmal ah) ka dibna soo saar signal-ka
     setTimeout(() => {
       const isCall = Math.random() > 0.5;
       
@@ -219,10 +221,10 @@
         actionText.innerText = "PUT (SELL 🔻)";
         signalCard.className = "signal-box put";
       }
-    }, 800);
+    }, 600);
   }
 
-  // Bilow timer-ka si uu u tuso wakhtiga shamcadda
+  // Bilow timer-ka tusaya wakhtiga oo keliya
   startSyncedTimer();
 </script>
 
