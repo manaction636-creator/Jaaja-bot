@@ -182,17 +182,22 @@
   const actionText = document.getElementById('actionText');
   const signalCard = document.getElementById('signalCard');
 
-  // Saacaddu waxay kaliya tusaysaa wakhtiga shamcadda (Countdown) ee socda iyadoon signal beddelayn
   function startSyncedTimer() {
     if (timerInterval) clearInterval(timerInterval);
 
     timerInterval = setInterval(() => {
       const now = new Date();
-      const totalSeconds = now.getMinutes() * 60 + now.getSeconds();
+      // Isticmaalka UTC ama saacadda maxalliga ah oo si toos ah u xisaabinaysa inta ka dhiman daqiiqadda
+      const currentSeconds = now.getSeconds();
+      const currentMillis = now.getMilliseconds();
       
-      let timeLeft = selectedTimeframe - (totalSeconds % selectedTimeframe);
+      let elapsedInPeriod = (currentSeconds % selectedTimeframe) + (currentMillis / 1000);
+      let timeLeft = Math.ceil(selectedTimeframe - elapsedInPeriod);
+      
+      if (timeLeft < 0) timeLeft = 0;
+
       timerText.innerText = `Next Candle: ${timeLeft}s`;
-    }, 500);
+    }, 200);
   }
 
   function setTimeframe(seconds, btnElement) {
@@ -201,12 +206,11 @@
 
     selectedTimeframe = seconds;
     
-    // Marka timeframe-ka la beddelo, dib ugu celi xaaladda sugitaanka
     actionText.innerText = "READY TO SCAN";
     signalCard.className = "signal-box";
   }
 
-  // Halkan waxaa kaliya oo signal lagu soo saarayaa marka aad adigu gujiso badhanka
+  // Badhanka uu adiga kuugu shaqeynayo oo keliya
   function forceScan() {
     actionText.innerText = "SCANNING...";
     signalCard.className = "signal-box";
@@ -224,7 +228,6 @@
     }, 600);
   }
 
-  // Bilow timer-ka tusaya wakhtiga oo keliya
   startSyncedTimer();
 </script>
 
