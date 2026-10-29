@@ -1,264 +1,57 @@
 <!DOCTYPE html>
 <html lang="so">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEUROBOT - Smart Market Health V2.3</title>
-    <style>
-        * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; }
-        body { background-color: #f3f4f6; color: #1f2937; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 15px; }
-        .terminal-card { background: #ffffff; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.08); width: 100%; max-width: 380px; padding: 20px; border: 1px solid #e5e7eb; }
-        .header { text-align: center; margin-bottom: 15px; }
-        .header h1 { font-size: 22px; font-weight: 900; color: #111827; }
-        .header h1 span { color: #2563eb; }
-        .header p { font-size: 11px; color: #6b7280; text-transform: uppercase; margin-top: 2px; }
-        .pair-badge { display: inline-block; background: #eff6ff; color: #2563eb; font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 12px; margin-top: 8px; }
-        
-        /* Market Health Section */
-        .health-card {
-            background: #f9fafb;
-            border: 1px solid #e5e7eb;
-            border-radius: 14px;
-            padding: 10px 12px;
-            margin-bottom: 12px;
-        }
-        .health-status {
-            display: flex;
-            justify-content: space-between;
-            font-size: 11px;
-            font-weight: bold;
-            margin-bottom: 6px;
-        }
-        .health-bar-bg {
-            height: 8px;
-            background: #e5e7eb;
-            border-radius: 10px;
-            overflow: hidden;
-        }
-        .health-fill {
-            height: 100%;
-            width: 85%;
-            background: #10b981;
-            transition: width 0.4s ease, background-color 0.4s ease;
-        }
-
-        /* Signal Box */
-        .signal-box { border-radius: 18px; padding: 16px; margin-bottom: 15px; display: flex; align-items: center; gap: 12px; transition: all 0.3s ease; }
-        .signal-box.up { background-color: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; }
-        .signal-box.down { background-color: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
-        .signal-box.closed { background-color: #fffbebf7; border: 1px solid #fde68a; color: #92400e; }
-        
-        .signal-icon { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; color: #fff; font-weight: bold; }
-        .signal-box.up .signal-icon { background-color: #10b981; }
-        .signal-box.down .signal-icon { background-color: #ef4444; }
-        .signal-box.closed .signal-icon { background-color: #f59e0b; }
-        
-        .signal-text { font-size: 15px; font-weight: 800; }
-
-        .details-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; font-size: 12px; }
-        .detail-item { display: flex; justify-content: space-between; align-items: center; color: #4b5563; }
-        .detail-label { color: #6b7280; }
-        .detail-value { font-weight: 700; color: #111827; }
-
-        .confidence-bar-bg { height: 6px; background: #e5e7eb; border-radius: 10px; overflow: hidden; margin-top: 4px; }
-        .confidence-fill { height: 100%; width: 0%; border-radius: 10px; transition: width 0.5s ease; }
-        .up .confidence-fill { background-color: #10b981; }
-        .down .confidence-fill { background-color: #ef4444; }
-        .closed .confidence-fill { background-color: #f59e0b; }
-
-        .reason-box { background: #f9fafb; border-radius: 12px; padding: 10px 12px; font-size: 11px; color: #6b7280; border: 1px solid #f3f4f6; margin-bottom: 15px; }
-        .controls { display: flex; flex-direction: column; gap: 10px; }
-        select { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid #d1d5db; background: #fff; font-size: 12px; outline: none; color: #374151; }
-        .scan-btn { background: #2563eb; color: #fff; border: none; padding: 12px; border-radius: 12px; font-weight: 700; font-size: 13px; cursor: pointer; transition: background 0.2s; }
-        .scan-btn:hover { background: #1d4ed8; }
-        .scan-btn:disabled { background: #9ca3af; cursor: not-allowed; }
-    </style>
+  <meta charset="UTF-8">
+  <title>AI Signal Radar Demo</title>
+  <style>
+    body { background-color: #0d1117; color: #fff; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; }
+    .card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 20px; width: 300px; text-align: center; }
+    .signal-box { background: #ff2a4b15; border: 2px solid #ff2a4b; padding: 15px; border-radius: 8px; margin-top: 15px; }
+    .signal-title { color: #ff2a4b; font-size: 22px; font-weight: bold; }
+    .timer { font-size: 18px; margin-top: 10px; color: #e6edf3; }
+    .btn { background: #238636; color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; margin-top: 15px; }
+  </style>
 </head>
 <body>
 
-<div class="terminal-card">
-    <div class="header">
-        <h1>NEURO<span>BOT</span></h1>
-        <p>Market Health & Auto-Block V2.3</p>
-        <div class="pair-badge" id="pairDisplay">CAD/CHF (OTC) • 1m</div>
-    </div>
-
-    <!-- Market Health Monitor -->
-    <div class="health-card">
-        <div class="health-status">
-            <span>Caafimaadka Suuqa: <strong id="healthScore">85% (FIICAN)</strong></span>
-            <span id="healthBadge" style="color: #10b981;">OPEN</span>
-        </div>
-        <div class="health-bar-bg">
-            <div class="health-fill" id="healthFill"></div>
-        </div>
-    </div>
-
-    <!-- Signal Box -->
-    <div class="signal-box down" id="signalBox">
-        <div class="signal-icon" id="signalIcon">↓</div>
-        <div class="signal-text" id="signalTitle">Your signal is DOWN</div>
-    </div>
-
-    <!-- Details -->
-    <div class="details-list">
-        <div class="detail-item"><span class="detail-label">📊 Pair</span><span class="detail-value" id="pairVal">CAD/CHF (OTC)</span></div>
-        <div class="detail-item"><span class="detail-label">📈 Trend Status</span><span class="detail-value" id="trendVal">Normal Market</span></div>
-        <div class="detail-item"><span class="detail-label">⏱️ Expiry</span><span class="detail-value">1 Minute</span></div>
-        <div class="detail-item" style="flex-direction: column; align-items: flex-start;">
-            <div style="display:flex; justify-content:space-between; width:100%;">
-                <span class="detail-label">🎯 Confidence</span>
-                <span class="detail-value" id="confidenceVal">95%</span>
-            </div>
-            <div class="confidence-bar-bg" style="width:100%;">
-                <div class="confidence-fill" id="confidenceFill" style="width: 95%;"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Reason Box -->
-    <div class="reason-box">
-        <strong>💬 Suuqa Status:</strong> <span id="reasonText">Suuqu xaalad fiican ayuu ku jiraa, waa la trading-gareyn karaa.</span>
-    </div>
-
-    <!-- Controls -->
-    <div class="controls">
-        <label style="font-size: 11px; font-weight: bold; color: #6b7280;">1. Dooro OTC Pair:</label>
-        <select id="assetSelect" onchange="checkMarketHealth()">
-        <option value="CAD/CHF (OTC)">CAD/CHF (OTC)</option>
-        <option value="EUR/USD (OTC)">EUR/USD (OTC)</option>
-        <option value="GBP/USD (OTC)">GBP/USD (OTC)</option>
-        <option value="USD/JPY (OTC)">USD/JPY (OTC)</option>
-        <option value="USD/MXN (OTC)">USD/MXN (OTC)</option>
-        <option value="USD/PKR (OTC)">USD/PKR (OTC)</option>
-        <option value="NZD/USD (OTC)">NZD/USD (OTC)</option>
-        <option value="CAD/CHF (OTC)">CAD/CHF (OTC)</option>
-        <option value="USD/IDR (OTC)">USD/IDR (OTC)</option>
-        <option value="USD/INR (OTC)">USD/INR (OTC)</option>
-        <option value="USD/NGN (OTC)">USD/NGN (OTC)</option>
-        <option value="USD/ARS (OTC)">USD/ARS (OTC)</option>
-        <option value="USD/ZAR (OTC)">USD/ZAR (OTC)</option>
-        <option value="NZD/JPY (OTC)">NZD/JPY (OTC)</option>
-        <option value="USD/BRL (OTC)">USD/BRL (OTC)</option>
-        <option value="NZD/CAD (OTC)">NZD/CAD (OTC)</option>
-        <option value="NZD/CHF (OTC)">NZD/CHF (OTC)</option>
-        <option value="USD/BDT (OTC)">USD/BDT (OTC)</option>
-        <option value="USD/COP (OTC)">USD/COP (OTC)</option>
-        <option value="USD/DZD (OTC)">USD/DZD (OTC)</option>
-        <option value="USD/EGP (OTC)">USD/EGP (OTC)</option>
-        <option value="USD/PHP (OTC)">USD/PHP (OTC)</option>
-        <option value="EUR/NZD (OTC)">EUR/NZD (OTC)</option>
-        <option value="GBP/NZD (OTC)">GBP/NZD (OTC)</option>
-        <option value="AUD/NZD (OTC)">AUD/NZD (OTC)</option>
-        <option value="AUD/USD (OTC)">AUD/USD (OTC)</option>
-        <option value="EUR/USD (OTC)">EUR/USD (OTC)</option>
-         <option value="EUR/JPY (OTC)">EUR/JPY (OTC)</option>
-
-        </select>
-
-        <label style="font-size: 11px; font-weight: bold; color: #6b7280;">2. Waafaji Trend-ka Quotex:</label>
-        <select id="manualTrendSelect">
-            <option value="DOWN">🔴 Force DOWN (SELL Signals Only)</option>
-            <option value="UP">🟢 Force UP (BUY Signals Only)</option>
-        </select>
-
-        <button class="scan-btn" id="scanBtn" onclick="generateStrictSignal()">ANALYZE & SCAN SIGNAL</button>
-    </div>
+<div class="card">
+  <h3>AUD/USD OTC</h3>
+  <div class="signal-box" id="signalCard">
+    <div class="signal-title" id="actionText">SCANNING...</div>
+    <div class="timer" id="timerText">Next Candle: 10s</div>
+  </div>
+  <button class="btn" onclick="forceScan()">Force Scan Now</button>
 </div>
 
 <script>
-    let isMarketClosed = false;
+  let timeLeft = 10;
+  const timerText = document.getElementById('timerText');
+  const actionText = document.getElementById('actionText');
 
-    function checkMarketHealth() {
-        const score = Math.floor(Math.random() * (98 - 40 + 1)) + 40;
-        const healthFill = document.getElementById("healthFill");
-        const healthScore = document.getElementById("healthScore");
-        const healthBadge = document.getElementById("healthBadge");
-        const btn = document.getElementById("scanBtn");
-        const signalBox = document.getElementById("signalBox");
+  function startTimer() {
+    setInterval(() => {
+      if (timeLeft > 0) {
+        timeLeft--;
+        timerText.innerText = `Next Candle: ${timeLeft}s`;
+      } else {
+        generateSignal();
+        timeLeft = 30; // Reset saacada
+      }
+    }, 1000);
+  }
 
-        healthFill.style.width = score + "%";
+  function generateSignal() {
+    const signals = ['PUT (SELL 🔻)', 'CALL (BUY 🔺)'];
+    const randomSignal = signals[Math.floor(Math.random() * signals.length)];
+    actionText.innerText = randomSignal;
+  }
 
-        if (score < 60) {
-            // Bad Market / Sideways -> AUTO CLOSE BOT
-            isMarketClosed = true;
-            healthFill.style.backgroundColor = "#ef4444";
-            healthScore.innerText = score + "% (SUUQU WAA ISKU DHEX YAAC)";
-            healthBadge.innerText = "CLOSED";
-            healthBadge.style.color = "#ef4444";
-            
-            signalBox.className = "signal-box closed";
-            document.getElementById("signalIcon").innerText = "⚠️";
-            document.getElementById("signalTitle").innerText = "MARKET CLOSED / UNSTABLE";
-            document.getElementById("trendVal").innerText = "Sideways / Bad Market";
-            document.getElementById("reasonText").innerText = "SUUQU WAA EBER / RISK BADAN! Bot-ka waa la xiray si looga fogaado khasaare.";
-            
-            btn.disabled = true;
-            btn.innerText = "BOT CLOSED (SUUQA WAA RISK)";
-        } else {
-            // Good Market -> OPEN
-            isMarketClosed = false;
-            healthFill.style.backgroundColor = "#10b981";
-            healthScore.innerText = score + "% (FIICAN)";
-            healthBadge.innerText = "OPEN";
-            healthBadge.style.color = "#10b981";
-            
-            btn.disabled = false;
-            btn.innerText = "ANALYZE & SCAN SIGNAL";
-        }
-    }
+  function forceScan() {
+    actionText.innerText = "SCANNING MARKET...";
+    timeLeft = 3;
+  }
 
-    function generateStrictSignal() {
-        if (isMarketClosed) return;
-
-        const btn = document.getElementById("scanBtn");
-        btn.disabled = true;
-        btn.innerText = "ANALYZING MARKET...";
-
-        setTimeout(() => {
-            const asset = document.getElementById("assetSelect").value;
-            const trend = document.getElementById("manualTrendSelect").value;
-            const signalBox = document.getElementById("signalBox");
-            
-            document.getElementById("pairDisplay").innerText = asset + " • 1m";
-            document.getElementById("pairVal").innerText = asset;
-
-            const confidence = Math.floor(Math.random() * (98 - 92 + 1)) + 92;
-            document.getElementById("confidenceVal").innerText = confidence + "%";
-            document.getElementById("confidenceFill").style.width = confidence + "%";
-
-                let marketHealthScore = parseInt(document.getElementById("healthScore").innerText) || 50;
-    let targetTrend = "";
-    let randomCheck = Math.random();
-
-    if (marketHealthScore > 70 && randomCheck > 0.5) {
-        targetTrend = "UP"; // Dhanka BUY
-    } else {
-        targetTrend = "DOWN"; // Dhanka SELL
-    }
-
-    if (targetTrend === "UP") {
-        signalBox.className = "signal-box up";
-        document.getElementById("signalIcon").innerText = "↑";
-        document.getElementById("signalTitle").innerText = "Your signal is UP";
-        document.getElementById("trendVal").innerText = "Strong Uptrend (BUY)";
-        document.getElementById("reasonText").innerText = "Suuqu wuxuu muujinayaa xoog dhanka kor u kaca ah (BUY).";
-    } else {
-        signalBox.className = "signal-box down";
-        document.getElementById("signalIcon").innerText = "↓";
-        document.getElementById("signalTitle").innerText = "Your signal is DOWN";
-        document.getElementById("trendVal").innerText = "Strong Downtrend (SELL)";
-        document.getElementById("reasonText").innerText = "Suuqu wuxuu muujinayaa cadaadis dhanka hoos u dhaca ah (SELL).";
-    }
-
-    
-            btn.disabled = false;
-            btn.innerText = "ANALYZE & SCAN SIGNAL";
-        }, 1000);
-    }
-
-    // Run Health Scanner when opened
-    checkMarketHealth();
+  startTimer();
 </script>
 
 </body>
