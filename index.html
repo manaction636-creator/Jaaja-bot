@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AIDelayX - Single Signal Visualizer</title>
+  <title>AIDelayX - Session Live Bot</title>
   <style>
     * {
       box-sizing: border-box;
@@ -13,8 +13,8 @@
     }
 
     body {
-      background-color: #07090e;
-      color: #00ffcc;
+      background-color: #0b0f19;
+      color: #ffffff;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -23,289 +23,265 @@
     }
 
     .container {
-      background-color: #0f141f;
-      border: 1px solid #ff2a4b;
-      border-radius: 12px;
-      padding: 16px;
+      background-color: #121824;
+      border: 1px solid #1f293d;
+      border-radius: 16px;
+      padding: 20px;
       width: 100%;
       max-width: 380px;
-      box-shadow: 0 0 20px rgba(255, 42, 75, 0.2);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
     }
 
-    .header {
+    /* Session Header Box */
+    .session-box {
+      background-color: #1a2332;
+      border: 1px solid #2a384c;
+      border-radius: 12px;
+      padding: 14px;
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    .session-title-row {
       display: flex;
-      justify-content: space-between;
+      justify-content: center;
       align-items: center;
-      border-bottom: 1px solid #1f293d;
-      padding-bottom: 8px;
-      margin-bottom: 12px;
+      gap: 6px;
+      font-size: 14px;
+      font-weight: 700;
+      color: #00ffcc;
+      margin-bottom: 6px;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background-color: #00ffcc;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #00ffcc;
+    }
+
+    .session-stats {
       font-size: 13px;
       color: #8b949e;
     }
 
-    .section-title {
+    .session-stats span {
+      color: #ffffff;
+      font-weight: bold;
+    }
+
+    .profit-text {
+      color: #00c853 !important;
+    }
+
+    /* Controls */
+    .control-group {
+      margin-bottom: 12px;
+      text-align: left;
+    }
+
+    .control-label {
       font-size: 11px;
       color: #8b949e;
+      margin-bottom: 4px;
+      display: block;
       text-transform: uppercase;
-      text-align: center;
-      margin-bottom: 6px;
-      letter-spacing: 1px;
+      letter-spacing: 0.5px;
     }
 
-    /* Market Selector */
-    .market-container {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 12px;
-    }
-
-    .market-btn {
-      flex: 1;
-      background-color: #161b22;
-      border: 1px solid #30363d;
-      color: #c9d1d9;
-      padding: 8px;
-      border-radius: 6px;
-      font-weight: bold;
-      cursor: pointer;
-      text-align: center;
-    }
-
-    .market-btn.active {
-      background-color: #00ffcc;
-      color: #07090e;
-      border-color: #00ffcc;
-    }
-
-    /* Asset Dropdown */
-    .asset-select {
+    select {
       width: 100%;
-      background-color: #161b22;
+      background-color: #1a2332;
       color: #00ffcc;
-      border: 1px solid #30363d;
-      padding: 10px;
-      border-radius: 6px;
+      border: 1px solid #2a384c;
+      padding: 8px 12px;
+      border-radius: 8px;
       font-size: 14px;
       font-weight: bold;
-      margin-bottom: 12px;
       outline: none;
       cursor: pointer;
     }
 
-    /* Expiry Time Buttons */
-    .expiry-container {
-      display: flex;
-      gap: 4px;
-      margin-bottom: 12px;
-    }
-
-    .exp-btn {
-      flex: 1;
-      background-color: #161b22;
-      border: 1px solid #30363d;
-      color: #c9d1d9;
-      padding: 6px 2px;
-      font-size: 12px;
-      border-radius: 4px;
-      font-weight: bold;
-      cursor: pointer;
-      text-align: center;
-    }
-
-    .exp-btn.active {
-      background-color: #00ffcc;
-      color: #07090e;
-      border-color: #00ffcc;
-    }
-
-    /* Scan Action Button */
+    /* Action Button */
     .scan-btn {
       width: 100%;
-      background: linear-gradient(90deg, #ff9900, #ffcc00);
-      color: #07090e;
+      background: linear-gradient(90deg, #00b0ff, #00e5ff);
+      color: #0b0f19;
       border: none;
       padding: 12px;
-      border-radius: 6px;
+      border-radius: 8px;
       font-size: 14px;
       font-weight: 800;
       cursor: pointer;
-      margin-bottom: 12px;
+      margin-bottom: 16px;
       text-transform: uppercase;
     }
 
-    /* Single Big Signal Box */
-    .signal-display-box {
-      background-color: #07090e;
-      border: 2px dashed #30363d;
-      border-radius: 8px;
-      padding: 20px;
-      text-align: center;
-      margin-bottom: 12px;
-      transition: all 0.3s ease;
+    .scan-btn:hover {
+      opacity: 0.9;
     }
 
-    .signal-display-box.call {
-      background-color: rgba(0, 255, 204, 0.1);
-      border: 2px solid #00ffcc;
+    /* Active Signal Card (Matches Image Style) */
+    .signal-card {
+      background-color: #1a2332;
+      border: 1px solid #2a384c;
+      border-radius: 12px;
+      padding: 16px;
+      text-align: left;
+      position: relative;
     }
 
-    .signal-display-box.put {
-      background-color: rgba(255, 42, 75, 0.1);
-      border: 2px solid #ff2a4b;
+    .signal-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      font-size: 13px;
     }
 
-    .signal-main-text {
-      font-size: 24px;
-      font-weight: 900;
-      letter-spacing: 1px;
-      margin-bottom: 4px;
+    .trade-num {
       color: #8b949e;
     }
 
-    .signal-display-box.call .signal-main-text {
-      color: #00ffcc;
+    .pair-name {
+      font-weight: 800;
+      color: #ffffff;
     }
 
-    .signal-display-box.put .signal-main-text {
-      color: #ff2a4b;
+    .trade-details-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
     }
 
-    .signal-sub-text {
-      font-size: 12px;
+    .amount-tag {
       color: #c9d1d9;
     }
 
-    /* System Logs Box */
-    .logs-box {
-      background-color: #05070a;
-      border: 1px solid #30363d;
+    .action-badge {
+      font-weight: 900;
+      padding: 4px 10px;
       border-radius: 6px;
-      padding: 8px;
-      height: 90px;
-      overflow-y: auto;
-      font-family: monospace;
-      font-size: 10px;
-      color: #00ffcc;
-      text-align: left;
+      font-size: 13px;
     }
 
-    .log-item {
-      margin-bottom: 3px;
+    .action-badge.call {
+      background-color: rgba(0, 200, 83, 0.2);
+      color: #00c853;
+      border: 1px solid #00c853;
+    }
+
+    .action-badge.put {
+      background-color: rgba(255, 42, 75, 0.2);
+      color: #ff2a4b;
+      border: 1px solid #ff2a4b;
+    }
+
+    .timer-badge {
+      font-size: 12px;
+      color: #8b949e;
+      margin-top: 8px;
+      text-align: right;
+    }
+
+    .waiting-text {
+      text-align: center;
+      color: #8b949e;
+      font-size: 13px;
+      padding: 10px 0;
     }
   </style>
 </head>
 <body>
 
 <div class="container">
-  <div class="header">
-    <span>🛡️ AIDelayX Single Visualizer</span>
-    <span id="liveClock">17:11:32</span>
+  <!-- Session Status Header -->
+  <div class="session-box">
+    <div class="session-title-row">
+      <div class="live-dot"></div>
+      Session · live
+    </div>
+    <div class="session-stats" id="sessionStats">
+      <span>27</span> trades · <span>22</span> wins · <span class="profit-text">+$726.21</span>
+    </div>
   </div>
 
-  <!-- Select Market -->
-  <div class="section-title">Select Market</div>
-  <div class="market-container">
-    <button class="market-btn" onclick="setMarket('REGULAR', this)">REGULAR</button>
-    <button class="market-btn active" onclick="setMarket('OTC', this)">OTC</button>
+  <!-- Currency Pair Selector -->
+  <div class="control-group">
+    <label class="control-label">Dooro Lamaanaha Lacagta</label>
+    <select id="assetSelect">
+      <option value="USD/CHF OTC">USD/CHF OTC</option>
+      <option value="EUR/USD OTC">EUR/USD OTC</option>
+      <option value="GBP/USD OTC">GBP/USD OTC</option>
+      <option value="AUD/USD OTC">AUD/USD OTC</option>
+      <option value="USD/JPY OTC">USD/JPY OTC</option>
+    </select>
   </div>
 
-  <!-- Select Asset Dropdown -->
-  <div class="section-title">Select Currency Pair</div>
-  <select id="assetSelect" class="asset-select">
-    <option value="EUR/USD">EUR/USD</option>
-    <option value="AUD/USD">AUD/USD</option>
-    <option value="GBP/USD">GBP/USD</option>
-    <option value="USD/JPY">USD/JPY</option>
-    <option value="EUR/GBP">EUR/GBP</option>
-    <option value="USD/CHF">USD/CHF</option>
-  </select>
+  <!-- Scan / Generate Signal Button -->
+  <button class="scan-btn" onclick="generateLiveSignal()">GENERATE LIVE SIGNAL</button>
 
-  <!-- Select Expiry Time -->
-  <div class="section-title">Select Expiration Time</div>
-  <div class="expiry-container">
-    <button class="exp-btn" onclick="setExpiry('5s', this)">5s</button>
-    <button class="exp-btn active" onclick="setExpiry('15s', this)">15s</button>
-    <button class="exp-btn" onclick="setExpiry('30s', this)">30s</button>
-    <button class="exp-btn" onclick="setExpiry('M1', this)">M1</button>
-    <button class="exp-btn" onclick="setExpiry('M3', this)">M3</button>
-    <button class="exp-btn" onclick="setExpiry('M5', this)">M5</button>
-  </div>
-
-  <!-- Action Button -->
-  <button class="scan-btn" onclick="startScanning()">START SCANNING</button>
-
-  <!-- Single Signal Box -->
-  <div class="signal-display-box" id="signalBox">
-    <div class="signal-main-text" id="signalMainText">READY</div>
-    <div class="signal-sub-text" id="signalSubText">Select asset and scan</div>
-  </div>
-
-  <!-- System Logs -->
-  <div class="section-title" style="text-align: left;">System Log</div>
-  <div class="logs-box" id="systemLogs">
-    <div class="log-item">[17:11:32] Visualizer ready.</div>
+  <!-- Signal Display Card -->
+  <div class="signal-card" id="signalCard">
+    <div class="waiting-text" id="waitingText">Waiting for a signal...</div>
   </div>
 </div>
 
 <script>
-  // Saacadda kore
-  setInterval(() => {
-    const now = new Date();
-    document.getElementById('liveClock').innerText = now.toTimeString().split(' ')[0];
-  }, 1000);
+  let totalTrades = 27;
+  let totalWins = 22;
+  let totalProfit = 726.21;
 
-  function setMarket(market, btn) {
-    document.querySelectorAll('.market-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    addLog(`Market switched to: ${market}`);
-  }
+  function generateLiveSignal() {
+    const asset = document.getElementById('assetSelect').value;
+    const signalCard = document.getElementById('signalCard');
+    
+    // Tirada trades-ka oo la kordhiyo markasta oo la scan-gareeyo
+    totalTrades++;
+    const isWin = Math.random() > 0.2; // 80% win rate simaale ah
+    if (isWin) {
+      totalWins++;
+      totalProfit += 45.50;
+    }
 
-  function setExpiry(exp, btn) {
-    document.querySelectorAll('.exp-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    addLog(`Expiration timeframe set to: ${exp}`);
-  }
+    // Updating Session Header Stats
+    document.getElementById('sessionStats').innerHTML = `<span>${totalTrades}</span> trades · <span>${totalWins}</span> wins · <span class="profit-text">+$${totalProfit.toFixed(2)}</span>`;
 
-  function addLog(text) {
-    const logsBox = document.getElementById('systemLogs');
-    const timeStr = new Date().toTimeString().split(' ')[0];
-    logsBox.innerHTML += `<div class="log-item">[${timeStr}] ${text}</div>`;
-    logsBox.scrollTop = logsBox.scrollHeight;
-  }
+    // Signal type: CALL ama PUT
+    const isCall = Math.random() > 0.5;
+    const actionClass = isCall ? "call" : "put";
+    const actionText = isCall ? "BUY 🔺" : "PUT 🔻";
 
-  function startScanning() {
-    const selectedAsset = document.getElementById('assetSelect').value;
-    const signalBox = document.getElementById('signalBox');
-    const mainText = document.getElementById('signalMainText');
-    const subText = document.getElementById('signalSubText');
+    // Ku shubista qaabka kaadhka sawirka ku jira
+    signalCard.innerHTML = `
+      <div class="signal-header-row">
+        <span class="trade-num">#${totalTrades}</span>
+        <span class="pair-name">${asset}</span>
+      </div>
+      <div class="trade-details-row">
+        <span class="amount-tag">$50.00</span>
+        <span class="action-badge ${actionClass}">${actionText}</span>
+      </div>
+      <div class="timer-badge" id="countdownTimer">29.5s</div>
+    `;
 
-    mainText.innerText = "SCANNING...";
-    subText.innerText = `Analyzing ${selectedAsset}...`;
-    signalBox.className = "signal-display-box";
-
-    addLog(`Connecting to WebSocket for ${selectedAsset}...`);
-
-    setTimeout(() => {
-      addLog("WebSocket connected | Low-latency established");
-    }, 500);
-
-    setTimeout(() => {
-      // Kala doorasho random ah oo u dhaxeysa BUY iyo SELL si uu hal mar u soo saaro
-      const isCall = Math.random() > 0.5;
-
-      if (isCall) {
-        mainText.innerText = "BUY (CALL 🟢)";
-        signalBox.className = "signal-display-box call";
-        subText.innerText = `${selectedAsset} - Confidence: 98%`;
-        addLog(`DETECT: Bullish pattern confirmed on ${selectedAsset}`);
+    // Saacadda hoos u tirtiraysa (Countdown)
+    let timeLeft = 30;
+    const timerInterval = setInterval(() => {
+      timeLeft -= 0.5;
+      const timerElem = document.getElementById('countdownTimer');
+      if (timerElem) {
+        timerElem.innerText = `${timeLeft.toFixed(1)}s`;
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          timerElem.innerText = "EXPIRED / COMPLETED";
+        }
       } else {
-        mainText.innerText = "SELL (PUT 🔴)";
-        signalBox.className = "signal-display-box put";
-        subText.innerText = `${selectedAsset} - Confidence: 96%`;
-        addLog(`DETECT: Bearish rejection detected on ${selectedAsset}`);
+        clearInterval(timerInterval);
       }
-      addLog("MODULE: Predictive Noise Filter (PNF) executed.");
-    }, 1200);
+    }, 500);
   }
 </script>
 
