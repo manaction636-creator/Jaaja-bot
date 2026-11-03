@@ -3,13 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AIDelayX - Session Live Bot</title>
+  <title>AIDelayX - 1M Session Bot</title>
   <style>
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      -webkit-tap-highlight-color: transparent;
     }
 
     body {
@@ -32,7 +33,6 @@
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
     }
 
-    /* Session Header Box */
     .session-box {
       background-color: #1a2332;
       border: 1px solid #2a384c;
@@ -75,7 +75,6 @@
       color: #00c853 !important;
     }
 
-    /* Controls */
     .control-group {
       margin-bottom: 12px;
       text-align: left;
@@ -84,7 +83,7 @@
     .control-label {
       font-size: 11px;
       color: #8b949e;
-      margin-bottom: 4px;
+      margin-bottom: 6px;
       display: block;
       text-transform: uppercase;
       letter-spacing: 0.5px;
@@ -95,7 +94,7 @@
       background-color: #1a2332;
       color: #00ffcc;
       border: 1px solid #2a384c;
-      padding: 8px 12px;
+      padding: 10px 12px;
       border-radius: 8px;
       font-size: 14px;
       font-weight: bold;
@@ -103,33 +102,37 @@
       cursor: pointer;
     }
 
-    /* Action Button */
     .scan-btn {
       width: 100%;
-      background: linear-gradient(90deg, #00b0ff, #00e5ff);
+      background: #00d8ff;
       color: #0b0f19;
       border: none;
-      padding: 12px;
+      padding: 14px;
       border-radius: 8px;
       font-size: 14px;
       font-weight: 800;
       cursor: pointer;
       margin-bottom: 16px;
       text-transform: uppercase;
+      transition: background 0.2s, transform 0.1s;
+      user-select: none;
     }
 
-    .scan-btn:hover {
-      opacity: 0.9;
+    .scan-btn:active {
+      transform: scale(0.98);
+      background: #00b0ff;
     }
 
-    /* Active Signal Card (Matches Image Style) */
     .signal-card {
       background-color: #1a2332;
       border: 1px solid #2a384c;
       border-radius: 12px;
       padding: 16px;
       text-align: left;
-      position: relative;
+      min-height: 80px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
     }
 
     .signal-header-row {
@@ -190,14 +193,13 @@
       text-align: center;
       color: #8b949e;
       font-size: 13px;
-      padding: 10px 0;
+      width: 100%;
     }
   </style>
 </head>
 <body>
 
 <div class="container">
-  <!-- Session Status Header -->
   <div class="session-box">
     <div class="session-title-row">
       <div class="live-dot"></div>
@@ -208,81 +210,91 @@
     </div>
   </div>
 
-  <!-- Currency Pair Selector -->
   <div class="control-group">
     <label class="control-label">Dooro Lamaanaha Lacagta</label>
     <select id="assetSelect">
-      <option value="USD/CHF OTC">USD/CHF OTC</option>
       <option value="EUR/USD OTC">EUR/USD OTC</option>
-      <option value="GBP/USD OTC">CHF/JPY OTC</option>
+      <option value="GBP/USD OTC">GBP/USD OTC</option>
       <option value="AUD/USD OTC">AUD/USD OTC</option>
-      <option value="USD/JPY OTC">USD/JPY OTC</option> 
+      <option value="USD/JPY OTC">USD/JPY OTC</option>
+      <option value="USD/CHF OTC">USD/CHF OTC</option>
+      <option value="EUR/GBP OTC">EUR/GBP OTC</option>
+      <option value="NZD/USD OTC">NZD/USD OTC</option>
+      <option value="CAD/CHF OTC">CAD/CHF OTC</option>
+      <option value="EUR/JPY OTC">EUR/JPY OTC</option>
+      <option value="GBP/JPY OTC">GBP/JPY OTC</option>
     </select>
   </div>
 
-  <!-- Scan / Generate Signal Button -->
-  <button class="scan-btn" onclick="generateLiveSignal()">GENERATE LIVE SIGNAL</button>
+  <button class="scan-btn" id="generateBtn">GENERATE LIVE SIGNAL</button>
 
-  <!-- Signal Display Card -->
   <div class="signal-card" id="signalCard">
     <div class="waiting-text" id="waitingText">Waiting for a signal...</div>
   </div>
 </div>
 
 <script>
-  let totalTrades = 0;
-  let totalWins = 0;
+  let totalTrades = 27;
+  let totalWins = 22;
   let totalProfit = 10000.21;
+  let timerInterval = null;
+
+  const generateBtn = document.getElementById('generateBtn');
 
   function generateLiveSignal() {
     const asset = document.getElementById('assetSelect').value;
     const signalCard = document.getElementById('signalCard');
     
-    // Tirada trades-ka oo la kordhiyo markasta oo la scan-gareeyo
+    if (timerInterval) clearInterval(timerInterval);
+
     totalTrades++;
-    const isWin = Math.random() > 0.2; // 80% win rate simaale ah
+    const isWin = Math.random() > 0.2;
     if (isWin) {
       totalWins++;
-      totalProfit += 4.50;
+      totalProfit += 45.50;
     }
 
-    // Updating Session Header Stats
     document.getElementById('sessionStats').innerHTML = `<span>${totalTrades}</span> trades · <span>${totalWins}</span> wins · <span class="profit-text">+$${totalProfit.toFixed(2)}</span>`;
 
-    // Signal type: CALL ama PUT
     const isCall = Math.random() > 0.5;
     const actionClass = isCall ? "call" : "put";
     const actionText = isCall ? "BUY 🔺" : "PUT 🔻";
 
-    // Ku shubista qaabka kaadhka sawirka ku jira
     signalCard.innerHTML = `
       <div class="signal-header-row">
         <span class="trade-num">#${totalTrades}</span>
         <span class="pair-name">${asset}</span>
       </div>
       <div class="trade-details-row">
-        <span class="amount-tag">$0.00</span>
+        <span class="amount-tag">$50.00</span>
         <span class="action-badge ${actionClass}">${actionText}</span>
       </div>
-      <div class="timer-badge" id="countdownTimer">29.5s</div>
+      <div class="timer-badge" id="countdownTimer">60.0s</div>
     `;
 
-    // Saacadda hoos u tirtiraysa (Countdown)
-    let timeLeft = 1m;
-    const timerInterval = setInterval(() => {
+    // 1 daqiiqo (60 ilbiriqsi) timer ah
+    let timeLeft = 60.0;
+    timerInterval = setInterval(() => {
       timeLeft -= 0.5;
       const timerElem = document.getElementById('countdownTimer');
       if (timerElem) {
-        timerElem.innerText = `${timeLeft.toFixed(1)}s`;
-        if (timeLeft <= 0) {
+        if (timeLeft > 0) {
+          timerElem.innerText = `${timeLeft.toFixed(1)}s`;
+        } else {
           clearInterval(timerInterval);
-          timerElem.innerText = "wuu dhacay / wakhtigisa";
+          timerElem.innerText = "EXPIRED (COMPLETED)";
         }
       } else {
         clearInterval(timerInterval);
       }
     }, 500);
   }
+
+  generateBtn.addEventListener('click', generateLiveSignal);
+  generateBtn.addEventListener('touchstart', function(e) {
+    e.preventDefault();
+    generateLiveSignal();
+  }, { passive: false });
 </script>
 
 </body>
