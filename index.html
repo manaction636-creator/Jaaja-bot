@@ -204,7 +204,7 @@
       Session · live
     </div>
     <div class="session-stats" id="sessionStats">
-      <span>27</span> trades · <span>22</span> wins · <span class="profit-text">+$726.21</span>
+      <span>27</span> trades · <span>22</span> wins · <span class="profit-text">+$10000.21</span>
     </div>
   </div>
 
@@ -214,7 +214,7 @@
     <select id="assetSelect">
       <option value="USD/CHF OTC">USD/CHF OTC</option>
       <option value="EUR/USD OTC">EUR/USD OTC</option>
-      <option value="GBP/USD OTC">GBP/USD OTC</option>
+      <option value="GBP/USD OTC">CHF/JPY OTC</option>
       <option value="AUD/USD OTC">AUD/USD OTC</option>
       <option value="USD/JPY OTC">USD/JPY OTC</option>
     </select>
@@ -230,9 +230,9 @@
 </div>
 
 <script>
-  let totalTrades = 27;
-  let totalWins = 22;
-  let totalProfit = 726.21;
+  let totalTrades = 0;
+  let totalWins = 0;
+  let totalProfit = 10000.21;
 
   function generateLiveSignal() {
     const asset = document.getElementById('assetSelect').value;
@@ -243,7 +243,7 @@
     const isWin = Math.random() > 0.2; // 80% win rate simaale ah
     if (isWin) {
       totalWins++;
-      totalProfit += 45.50;
+      totalProfit += 4.50;
     }
 
     // Updating Session Header Stats
@@ -268,7 +268,7 @@
     `;
 
     // Saacadda hoos u tirtiraysa (Countdown)
-    let timeLeft = 30;
+    let timeLeft = 1;
     const timerInterval = setInterval(() => {
       timeLeft -= 0.5;
       const timerElem = document.getElementById('countdownTimer');
