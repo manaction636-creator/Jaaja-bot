@@ -254,7 +254,32 @@
       color: #ffffff;
     }
 
-    /* Scan Button */
+    /* Search & History Log Section */
+    .history-box {
+      background-color: #161820;
+      border: 1px solid #2a2d3d;
+      border-radius: 12px;
+      padding: 10px;
+      margin-bottom: 14px;
+      max-height: 100px;
+      overflow-y: auto;
+      font-size: 11px;
+      font-family: monospace;
+    }
+
+    .history-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 4px 0;
+      border-bottom: 1px solid #222634;
+      color: #8a8d9b;
+    }
+
+    .history-item span b {
+      color: #ffffff;
+    }
+
+    /* Scan Button with Touch Animation */
     .scan-btn {
       width: 100%;
       background: linear-gradient(90deg, #ffb703, #ff9900);
@@ -266,12 +291,12 @@
       font-weight: 900;
       cursor: pointer;
       text-transform: uppercase;
-      margin-top: 10px;
-      transition: opacity 0.2s;
+      transition: transform 0.1s, opacity 0.2s;
     }
 
     .scan-btn:active {
-      opacity: 0.8;
+      transform: scale(0.97);
+      opacity: 0.85;
     }
   </style>
 </head>
@@ -378,8 +403,16 @@
     </div>
   </div>
 
+  <!-- Search & History Log Section -->
+  <div class="section-box" style="padding: 10px 14px; margin-bottom: 10px;">
+    <div class="section-header" style="margin-bottom: 6px;">Search & History Log</div>
+    <div class="history-box" id="historyLogContainer">
+      <div class="history-item"><span>System Initialized</span><span>--:--</span></div>
+    </div>
+  </div>
+
   <!-- Scan Button -->
-  <button class="scan-btn" onclick="updateSignalData()">GENERATE NEW ANALYSIS</button>
+  <button class="scan-btn" id="scanBtn" onclick="updateSignalData()">GENERATE NEW ANALYSIS</button>
 </div>
 
 <script>
@@ -392,6 +425,7 @@
   }, 1000);
 
   function updateSignalData() {
+    const asset = document.getElementById('assetSelect').value;
     const isPut = Math.random() > 0.5;
     const basePrice = (Math.random() * 0.2 + 0.75).toFixed(5);
     
@@ -408,10 +442,12 @@
     const predictionTag = document.getElementById('predictionTag');
     const confidenceVal = document.getElementById('confidenceVal');
 
-    const confidence = Math.floor(Math.random() * 40) + 50; // 50% - 90%
+    const confidence = Math.floor(Math.random() * 40) + 50;
     confidenceVal.innerText = `${confidence}%`;
 
+    let directionText = "CALL";
     if (isPut) {
+      directionText = "PUT";
       dirCard.className = "metric-card direction-put";
       dirVal.className = "metric-value val-put";
       dirVal.innerText = "📉 PUT";
@@ -434,6 +470,17 @@
       document.getElementById('putCountLabel').innerText = "PUT 1";
       document.getElementById('trendBadge').innerText = "STRONG_UP (80%)";
     }
+
+    // Ku dar taariikhda (History Log) falanqeyntii la taabtay
+    const now = new Date();
+    const timeStr = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0') + ':' + String(now.getSeconds()).padStart(2, '0');
+    
+    const historyContainer = document.getElementById('historyLogContainer');
+    const logEntry = document.createElement('div');
+    logEntry.className = "history-item";
+    logEntry.innerHTML = `<span><b>${asset}</b> → <span style="color:${directionText === 'CALL' ? '#00e676':'#ff3b5c'}">${directionText}</span> (${confidence}%)</span><span>${timeStr}</span>`;
+    
+    historyContainer.prepend(logEntry);
   }
 </script>
 
