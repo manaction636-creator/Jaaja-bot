@@ -216,7 +216,7 @@
       <option value="EUR/USD OTC">EUR/USD OTC</option>
       <option value="GBP/USD OTC">CHF/JPY OTC</option>
       <option value="AUD/USD OTC">AUD/USD OTC</option>
-      <option value="USD/JPY OTC">USD/JPY OTC</option>
+      <option value="USD/JPY OTC">USD/JPY OTC</option> 
     </select>
   </div>
 
@@ -261,14 +261,14 @@
         <span class="pair-name">${asset}</span>
       </div>
       <div class="trade-details-row">
-        <span class="amount-tag">$50.00</span>
+        <span class="amount-tag">$0.00</span>
         <span class="action-badge ${actionClass}">${actionText}</span>
       </div>
       <div class="timer-badge" id="countdownTimer">29.5s</div>
     `;
 
     // Saacadda hoos u tirtiraysa (Countdown)
-    let timeLeft = 1;
+    let timeLeft = Time frames (M1);
     const timerInterval = setInterval(() => {
       timeLeft -= 0.5;
       const timerElem = document.getElementById('countdownTimer');
@@ -276,7 +276,7 @@
         timerElem.innerText = `${timeLeft.toFixed(1)}s`;
         if (timeLeft <= 0) {
           clearInterval(timerInterval);
-          timerElem.innerText = "EXPIRED / COMPLETED";
+          timerElem.innerText = "wuu dhacay / wakhtigisa";
         }
       } else {
         clearInterval(timerInterval);
