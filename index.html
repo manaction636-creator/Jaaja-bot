@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AIDelayX - 30S Session Bot</title>
+  <title>PO MINI BOT - Live Signal</title>
   <style>
     * {
       box-sizing: border-box;
@@ -14,7 +14,7 @@
     }
 
     body {
-      background-color: #0b0f19;
+      background-color: #07090e;
       color: #ffffff;
       display: flex;
       justify-content: center;
@@ -26,67 +26,41 @@
     .container {
       background-color: #121824;
       border: 1px solid #1f293d;
-      border-radius: 16px;
-      padding: 20px;
-      width: 100%;
-      max-width: 380px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
-    }
-
-    .session-box {
-      background-color: #1a2332;
-      border: 1px solid #2a384c;
       border-radius: 12px;
-      padding: 14px;
-      text-align: center;
-      margin-bottom: 16px;
+      padding: 16px;
+      width: 100%;
+      max-width: 340px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7);
     }
 
-    .session-title-row {
+    .header-row {
       display: flex;
-      justify-content: center;
+      justify-content: space-between;
       align-items: center;
-      gap: 6px;
-      font-size: 14px;
-      font-weight: 700;
-      color: #00ffcc;
-      margin-bottom: 6px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid #1f293d;
+      padding-bottom: 8px;
     }
 
-    .live-dot {
-      width: 8px;
-      height: 8px;
-      background-color: #00ffcc;
-      border-radius: 50%;
-      box-shadow: 0 0 8px #00ffcc;
-    }
-
-    .session-stats {
+    .bot-title {
       font-size: 13px;
-      color: #8b949e;
-    }
-
-    .session-stats span {
-      color: #ffffff;
-      font-weight: bold;
-    }
-
-    .profit-text {
-      color: #00c853 !important;
+      font-weight: 800;
+      color: #ffb703;
+      display: flex;
+      align-items: center;
+      gap: 5px;
     }
 
     .control-group {
       margin-bottom: 12px;
-      text-align: left;
     }
 
     .control-label {
-      font-size: 11px;
+      font-size: 10px;
       color: #8b949e;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
       display: block;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
     }
 
     select {
@@ -94,223 +68,230 @@
       background-color: #1a2332;
       color: #00ffcc;
       border: 1px solid #2a384c;
-      padding: 10px 12px;
-      border-radius: 8px;
-      font-size: 14px;
+      padding: 8px 10px;
+      border-radius: 6px;
+      font-size: 13px;
       font-weight: bold;
       outline: none;
       cursor: pointer;
     }
 
-    .scan-btn {
+    /* Stop/Start Button */
+    .toggle-btn {
       width: 100%;
-      background: #00d8ff;
-      color: #0b0f19;
-      border: none;
-      padding: 14px;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 800;
-      cursor: pointer;
-      margin-bottom: 16px;
-      text-transform: uppercase;
-      transition: background 0.2s, transform 0.1s;
-      user-select: none;
-    }
-
-    .scan-btn:active {
-      transform: scale(0.98);
-      background: #00b0ff;
-    }
-
-    .signal-card {
-      background-color: #1a2332;
-      border: 1px solid #2a384c;
-      border-radius: 12px;
-      padding: 16px;
-      text-align: left;
-      min-height: 80px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    }
-
-    .signal-header-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-      font-size: 13px;
-    }
-
-    .trade-num {
-      color: #8b949e;
-    }
-
-    .pair-name {
-      font-weight: 800;
+      background: #ff3b5c;
       color: #ffffff;
-    }
-
-    .trade-details-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 14px;
-    }
-
-    .amount-tag {
-      color: #c9d1d9;
-    }
-
-    .action-badge {
-      font-weight: 900;
-      padding: 4px 10px;
+      border: none;
+      padding: 10px;
       border-radius: 6px;
       font-size: 13px;
+      font-weight: 900;
+      cursor: pointer;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      transition: background 0.2s;
     }
 
-    .action-badge.call {
-      background-color: rgba(0, 200, 83, 0.2);
-      color: #00c853;
-      border: 1px solid #00c853;
+    .toggle-btn.running {
+      background: #ff3b5c;
     }
 
-    .action-badge.put {
-      background-color: rgba(255, 42, 75, 0.2);
-      color: #ff2a4b;
-      border: 1px solid #ff2a4b;
+    .toggle-btn.stopped {
+      background: #00c853;
     }
 
-    .timer-badge {
+    /* Progress bar */
+    .progress-track {
+      width: 100%;
+      height: 4px;
+      background: #1a2332;
+      border-radius: 2px;
+      margin-bottom: 10px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      width: 0%;
+      height: 100%;
+      background: #00ffcc;
+      transition: width 0.5s linear;
+    }
+
+    /* Status Box */
+    .status-panel {
+      background-color: #1a2332;
+      border: 1px solid #2a384c;
+      border-radius: 8px;
+      padding: 12px;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .timer-display {
+      font-size: 18px;
+      font-weight: 900;
+      color: #ffb703;
+      margin-bottom: 4px;
+    }
+
+    .status-text {
       font-size: 12px;
       color: #8b949e;
-      margin-top: 8px;
-      text-align: right;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
-    .waiting-text {
+    /* Signal Output Box */
+    .signal-output {
+      background-color: #0b0f19;
+      border: 1px solid #2a384c;
+      border-radius: 8px;
+      padding: 10px;
       text-align: center;
+      font-size: 14px;
+      font-weight: 900;
+      margin-bottom: 10px;
+    }
+
+    .signal-output.call {
+      color: #00c853;
+      border-color: #00c853;
+      background: rgba(0, 200, 83, 0.1);
+    }
+
+    .signal-output.put {
+      color: #ff3b5c;
+      border-color: #ff3b5c;
+      background: rgba(255, 59, 92, 0.1);
+    }
+
+    .footer-note {
+      font-size: 10px;
       color: #8b949e;
-      font-size: 13px;
-      width: 100%;
+      text-align: center;
+      letter-spacing: 0.5px;
     }
   </style>
 </head>
 <body>
 
 <div class="container">
-  <div class="session-box">
-    <div class="session-title-row">
-      <div class="live-dot"></div>
-      Session · live
-    </div>
-    <div class="session-stats" id="sessionStats">
-      <span>27</span> trades · <span>22</span> wins · <span class="profit-text">+$10000.21</span>
-    </div>
+  <div class="header-row">
+    <div class="bot-title">⚡ PO MINI BOT</div>
+    <div style="font-size: 11px; color: #00c853; font-weight: bold;" id="modeStatus">REAL</div>
   </div>
 
   <div class="control-group">
     <label class="control-label">Dooro Lamaanaha Lacagta</label>
     <select id="assetSelect">
-      <optgroup label="OTC Markets">
-        <option value="EUR/USD OTC">EUR/USD OTC</option>
-        <option value="GBP/USD OTC">GBP/USD OTC</option>
-        <option value="AUD/USD OTC">AUD/USD OTC</option>
-        <option value="USD/JPY OTC">USD/JPY OTC</option>
-        <option value="USD/CHF OTC">USD/CHF OTC</option>
-        <option value="EUR/GBP OTC">EUR/GBP OTC</option>
-        <option value="NZD/CAD (OTC)">NZD/CAD OTC</option>
-        <option value="NZD/USD OTC">NZD/USD OTC</option>
-        <option value="CAD/CHF OTC">CAD/CHF OTC</option>
-        <option value="EUR/JPY OTC">EUR/JPY OTC</option>
-        <option value="GBP/JPY OTC">GBP/JPY OTC</option>
-        <option value="AUD/CAD OTC">AUD/CAD OTC</option>
-        <option value="AUD/JPY OTC">AUD/JPY OTC</option>
-        <option value="USD/INR OTC">USD/INR OTC</option>
-        <option value="USD/MXN OTC">USD/MXN OTC</option>
-      </optgroup>
-      <optgroup label="Regular Markets">
-        <option value="EUR/USD">EUR/USD</option>
-        <option value="GBP/USD">GBP/USD</option>
-        <option value="USD/JPY">USD/JPY</option>
-        <option value="AUD/USD">AUD/USD</option>
-        <option value="USD/CHF">USD/CHF</option>
-        <option value="USD/CAD">USD/CAD</option>
-        <option value="EUR/GBP">EUR/GBP</option>
-      </optgroup>
+      <option value="CAD/JPY OTC">CAD/JPY OTC</option>
+      <option value="EUR/USD OTC">EUR/USD OTC</option>
+      <option value="GBP/USD OTC">GBP/USD OTC</option>
+      <option value="AUD/USD OTC">AUD/USD OTC</option>
+      <option value="USD/JPY OTC">USD/JPY OTC</option>
+      <option value="USD/CHF OTC">USD/CHF OTC</option>
     </select>
   </div>
 
-  <button class="scan-btn" id="generateBtn">GENERATE LIVE SIGNAL</button>
+  <!-- Stop / Start Button -->
+  <button class="toggle-btn running" id="toggleBtn" onclick="toggleBot()">■ STOP</button>
 
-  <div class="signal-card" id="signalCard">
-    <div class="waiting-text" id="waitingText">Waiting for a signal...</div>
+  <!-- Progress Bar -->
+  <div class="progress-track">
+    <div class="progress-fill" id="progressFill"></div>
   </div>
+
+  <!-- Status Panel -->
+  <div class="status-panel">
+    <div class="timer-display" id="timerDisplay">5s</div>
+    <div class="status-text" id="statusText">WAITING...</div>
+  </div>
+
+  <!-- Signal Box -->
+  <div class="signal-output" id="signalOutput">
+    Signal: —
+  </div>
+
+  <div class="footer-note">• REAL SIGNAL ONLY •</div>
 </div>
 
 <script>
-  let totalTrades = 27;
-  let totalWins = 22;
-  let totalProfit = 10000.21;
-  let timerInterval = null;
+  let isRunning = true;
+  let botInterval = null;
+  let countdownTimer = null;
 
-  const generateBtn = document.getElementById('generateBtn');
-
-  function generateLiveSignal() {
-    const asset = document.getElementById('assetSelect').value;
-    const signalCard = document.getElementById('signalCard');
+  function toggleBot() {
+    isRunning = !isRunning;
+    const btn = document.getElementById('toggleBtn');
+    const statusText = document.getElementById('statusText');
     
-    if (timerInterval) clearInterval(timerInterval);
-
-    totalTrades++;
-    const isWin = Math.random() > 0.2;
-    if (isWin) {
-      totalWins++;
-      totalProfit += 45.50;
+    if (isRunning) {
+      btn.innerText = "■ STOP";
+      btn.className = "toggle-btn running";
+      statusText.innerText = "WAITING...";
+      startBotLoop();
+    } else {
+      btn.innerText = "► START";
+      btn.className = "toggle-btn stopped";
+      statusText.innerText = "STOPPED";
+      clearInterval(botInterval);
+      clearInterval(countdownTimer);
+      document.getElementById('timerDisplay').innerText = "--";
+      document.getElementById('signalOutput').className = "signal-output";
+      document.getElementById('signalOutput').innerText = "Signal: —";
+      document.getElementById('progressFill').style.width = "0%";
     }
-
-    document.getElementById('sessionStats').innerHTML = `<span>${totalTrades}</span> trades · <span>${totalWins}</span> wins · <span class="profit-text">+$${totalProfit.toFixed(2)}</span>`;
-
-    const isCall = Math.random() > 0.5;
-    const actionClass = isCall ? "call" : "put";
-    const actionText = isCall ? "BUY 🔺" : "PUT 🔻";
-
-    signalCard.innerHTML = `
-      <div class="signal-header-row">
-        <span class="trade-num">#${totalTrades}</span>
-        <span class="pair-name">${asset}</span>
-      </div>
-      <div class="trade-details-row">
-        <span class="amount-tag">$50.00</span>
-        <span class="action-badge ${actionClass}">${actionText}</span>
-      </div>
-      <div class="timer-badge" id="countdownTimer">30.0s</div>
-    `;
-
-    // 30 Ilbiriqsi timer ah
-    let timeLeft = 30.0;
-    timerInterval = setInterval(() => {
-      timeLeft -= 0.5;
-      const timerElem = document.getElementById('countdownTimer');
-      if (timerElem) {
-        if (timeLeft > 0) {
-          timerElem.innerText = `${timeLeft.toFixed(1)}s`;
-        } else {
-          clearInterval(timerInterval);
-          timerElem.innerText = "EXPIRED (COMPLETED)";
-        }
-      } else {
-        clearInterval(timerInterval);
-      }
-    }, 500);
   }
 
-  generateBtn.addEventListener('click', generateLiveSignal);
-  generateBtn.addEventListener('touchstart', function(e) {
-    e.preventDefault();
-    generateLiveSignal();
-  }, { passive: false });
+  function startBotLoop() {
+    if (!isRunning) return;
+
+    let secondsLeft = 5;
+    document.getElementById('timerDisplay').innerText = secondsLeft + "s";
+    document.getElementById('statusText').innerText = "WAITING...";
+    document.getElementById('signalOutput').className = "signal-output";
+    document.getElementById('signalOutput').innerText = "Signal: —";
+    document.getElementById('progressFill').style.width = "0%";
+
+    let progress = 0;
+    
+    // Countdown tirsiga ilbiriqisyada
+    countdownTimer = setInterval(() => {
+      secondsLeft--;
+      progress += 20;
+      document.getElementById('progressFill').style.width = progress + "%";
+      
+      if (secondsLeft > 0) {
+        document.getElementById('timerDisplay').innerText = secondsLeft + "s";
+      } else {
+        clearInterval(countdownTimer);
+        document.getElementById('timerDisplay').innerText = "0s";
+        document.getElementById('statusText').innerText = "ANALYZING...";
+        
+        // Soo saaridda Signal-ka (BUY ama SELL) kadib marka uu waqtigu dhamaado
+        setTimeout(() => {
+          if (!isRunning) return;
+          const isCall = Math.random() > 0.5;
+          const sigOutput = document.getElementById('signalOutput');
+          
+          if (isCall) {
+            sigOutput.className = "signal-output call";
+            sigOutput.innerText = "Signal: BUY (CALL 🟢)";
+          } else {
+            sigOutput.className = "signal-output put";
+            sigOutput.innerText = "Signal: SELL (PUT 🔴)";
+          }
+          document.getElementById('statusText').innerText = "SIGNAL ACTIVE";
+          
+          // Dib u billaabida wareega xiga 6 ilbiriqsi kadib
+          setTimeout(startBotLoop, 6000);
+        }, 1000);
+      }
+    }, 1000);
+  }
+
+  // Bilow marka uu boggu furmo
+  startBotLoop();
 </script>
 
 </body>
