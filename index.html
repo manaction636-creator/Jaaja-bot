@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AIDelayX - 1M Session Bot</title>
+  <title>AIDelayX - 30S Session Bot</title>
   <style>
     * {
       box-sizing: border-box;
@@ -213,16 +213,32 @@
   <div class="control-group">
     <label class="control-label">Dooro Lamaanaha Lacagta</label>
     <select id="assetSelect">
-      <option value="EUR/USD OTC">EUR/USD OTC</option>
-      <option value="GBP/USD OTC">GBP/USD OTC</option>
-      <option value="AUD/USD OTC">AUD/USD OTC</option>
-      <option value="USD/JPY OTC">USD/JPY OTC</option>
-      <option value="USD/CHF OTC">USD/CHF OTC</option>
-      <option value="EUR/GBP OTC">EUR/GBP OTC</option>
-      <option value="NZD/USD OTC">NZD/USD OTC</option>
-      <option value="CAD/CHF OTC">CAD/CHF OTC</option>
-      <option value="EUR/JPY OTC">EUR/JPY OTC</option>
-      <option value="GBP/JPY OTC">GBP/JPY OTC</option>
+      <optgroup label="OTC Markets">
+        <option value="EUR/USD OTC">EUR/USD OTC</option>
+        <option value="GBP/USD OTC">GBP/USD OTC</option>
+        <option value="AUD/USD OTC">AUD/USD OTC</option>
+        <option value="USD/JPY OTC">USD/JPY OTC</option>
+        <option value="USD/CHF OTC">USD/CHF OTC</option>
+        <option value="EUR/GBP OTC">EUR/GBP OTC</option>
+        <option value="NZD/CAD (OTC)">NZD/CAD OTC</option>
+        <option value="NZD/USD OTC">NZD/USD OTC</option>
+        <option value="CAD/CHF OTC">CAD/CHF OTC</option>
+        <option value="EUR/JPY OTC">EUR/JPY OTC</option>
+        <option value="GBP/JPY OTC">GBP/JPY OTC</option>
+        <option value="AUD/CAD OTC">AUD/CAD OTC</option>
+        <option value="AUD/JPY OTC">AUD/JPY OTC</option>
+        <option value="USD/INR OTC">USD/INR OTC</option>
+        <option value="USD/MXN OTC">USD/MXN OTC</option>
+      </optgroup>
+      <optgroup label="Regular Markets">
+        <option value="EUR/USD">EUR/USD</option>
+        <option value="GBP/USD">GBP/USD</option>
+        <option value="USD/JPY">USD/JPY</option>
+        <option value="AUD/USD">AUD/USD</option>
+        <option value="USD/CHF">USD/CHF</option>
+        <option value="USD/CAD">USD/CAD</option>
+        <option value="EUR/GBP">EUR/GBP</option>
+      </optgroup>
     </select>
   </div>
 
@@ -269,11 +285,11 @@
         <span class="amount-tag">$50.00</span>
         <span class="action-badge ${actionClass}">${actionText}</span>
       </div>
-      <div class="timer-badge" id="countdownTimer">60.0s</div>
+      <div class="timer-badge" id="countdownTimer">30.0s</div>
     `;
 
-    // 1 daqiiqo (60 ilbiriqsi) timer ah
-    let timeLeft = 60.0;
+    // 30 Ilbiriqsi timer ah
+    let timeLeft = 30.0;
     timerInterval = setInterval(() => {
       timeLeft -= 0.5;
       const timerElem = document.getElementById('countdownTimer');
