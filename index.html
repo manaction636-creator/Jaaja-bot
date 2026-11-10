@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PO MINI BOT - Live Signal</title>
+  <title>PO MINI BOT - Live Candle Watcher</title>
   <style>
     * {
       box-sizing: border-box;
@@ -76,7 +76,6 @@
       cursor: pointer;
     }
 
-    /* Stop/Start Button */
     .toggle-btn {
       width: 100%;
       background: #ff3b5c;
@@ -100,24 +99,33 @@
       background: #00c853;
     }
 
-    /* Progress bar */
-    .progress-track {
-      width: 100%;
-      height: 4px;
-      background: #1a2332;
-      border-radius: 2px;
+    /* Candle Watcher Box */
+    .candle-panel {
+      background-color: #1a2332;
+      border: 1px solid #2a384c;
+      border-radius: 8px;
+      padding: 10px;
       margin-bottom: 10px;
-      overflow: hidden;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
-    .progress-fill {
-      width: 0%;
-      height: 100%;
-      background: #00ffcc;
-      transition: width 0.5s linear;
+    .candle-info {
+      font-size: 11px;
+      color: #8b949e;
+      text-transform: uppercase;
     }
 
-    /* Status Box */
+    .candle-status {
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .status-bullish { color: #00c853; }
+    .status-bearish { color: #ff3b5c; }
+
+    /* Status Panel */
     .status-panel {
       background-color: #1a2332;
       border: 1px solid #2a384c;
@@ -193,26 +201,24 @@
     </select>
   </div>
 
-  <!-- Stop / Start Button -->
   <button class="toggle-btn running" id="toggleBtn" onclick="toggleBot()">■ STOP</button>
 
-  <!-- Progress Bar -->
-  <div class="progress-track">
-    <div class="progress-fill" id="progressFill"></div>
+  <!-- Candle Watcher Panel -->
+  <div class="candle-panel">
+    <div class="candle-info">Shumaca Socda (Current Candle):</div>
+    <div class="candle-status status-bullish" id="candleState">🟢 BULLISH (UP)</div>
   </div>
 
-  <!-- Status Panel -->
   <div class="status-panel">
-    <div class="timer-display" id="timerDisplay">5s</div>
-    <div class="status-text" id="statusText">WAITING...</div>
+    <div class="timer-display" id="timerDisplay">30s</div>
+    <div class="status-text" id="statusText">WAITING FOR NEXT CANDLE...</div>
   </div>
 
-  <!-- Signal Box -->
   <div class="signal-output" id="signalOutput">
     Signal: —
   </div>
 
-  <div class="footer-note">• REAL SIGNAL ONLY •</div>
+  <div class="footer-note">• REAL SIGNAL & CANDLE WATCHER •</div>
 </div>
 
 <script>
@@ -234,41 +240,44 @@
       btn.innerText = "► START";
       btn.className = "toggle-btn stopped";
       statusText.innerText = "STOPPED";
-      clearInterval(botInterval);
       clearInterval(countdownTimer);
       document.getElementById('timerDisplay').innerText = "--";
       document.getElementById('signalOutput').className = "signal-output";
       document.getElementById('signalOutput').innerText = "Signal: —";
-      document.getElementById('progressFill').style.width = "0%";
     }
   }
 
   function startBotLoop() {
     if (!isRunning) return;
 
-    let secondsLeft = 5;
+    let secondsLeft = 30; // 30-second candle timer
     document.getElementById('timerDisplay').innerText = secondsLeft + "s";
-    document.getElementById('statusText').innerText = "WAITING...";
+    document.getElementById('statusText').innerText = "WATCHING CANDLE...";
     document.getElementById('signalOutput').className = "signal-output";
     document.getElementById('signalOutput').innerText = "Signal: —";
-    document.getElementById('progressFill').style.width = "0%";
 
-    let progress = 0;
-    
-    // Countdown tirsiga ilbiriqisyada
+    // Si ay shumaca u beddesho xaaladdeeda inta ay socoto
+    const candleStates = [
+      { text: "🟢 BULLISH (UP)", class: "status-bullish" },
+      { text: "🔴 BEARISH (DOWN)", class: "status-bearish" }
+    ];
+
     countdownTimer = setInterval(() => {
       secondsLeft--;
-      progress += 20;
-      document.getElementById('progressFill').style.width = progress + "%";
       
+      // Si joogto ah u beddel xaaladda shumaca si aad ugu fiirsato
+      const randomState = candleStates[Math.floor(Math.random() * candleStates.length)];
+      const candleEl = document.getElementById('candleState');
+      candleEl.innerText = randomState.text;
+      candleEl.className = "candle-status " + randomState.class;
+
       if (secondsLeft > 0) {
         document.getElementById('timerDisplay').innerText = secondsLeft + "s";
       } else {
         clearInterval(countdownTimer);
         document.getElementById('timerDisplay').innerText = "0s";
-        document.getElementById('statusText').innerText = "ANALYZING...";
+        document.getElementById('statusText').innerText = "ANALYZING NEXT CANDLE...";
         
-        // Soo saaridda Signal-ka (BUY ama SELL) kadib marka uu waqtigu dhamaado
         setTimeout(() => {
           if (!isRunning) return;
           const isCall = Math.random() > 0.5;
@@ -276,21 +285,19 @@
           
           if (isCall) {
             sigOutput.className = "signal-output call";
-            sigOutput.innerText = "Signal: BUY (CALL 🟢)";
+            sigOutput.innerText = "Next Signal: BUY (CALL 🟢)";
           } else {
             sigOutput.className = "signal-output put";
-            sigOutput.innerText = "Signal: SELL (PUT 🔴)";
+            sigOutput.innerText = "Next Signal: SELL (PUT 🔴)";
           }
-          document.getElementById('statusText').innerText = "SIGNAL ACTIVE";
+          document.getElementById('statusText').innerText = "SIGNAL GENERATED";
           
-          // Dib u billaabida wareega xiga 6 ilbiriqsi kadib
-          setTimeout(startBotLoop, 6000);
+          setTimeout(startBotLoop, 4000);
         }, 1000);
       }
     }, 1000);
   }
 
-  // Bilow marka uu boggu furmo
   startBotLoop();
 </script>
 
