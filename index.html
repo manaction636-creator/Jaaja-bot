@@ -32,6 +32,7 @@
       max-width: 360px;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
       position: relative;
+      overflow: hidden;
     }
 
     /* Lock Screen Modal */
@@ -48,7 +49,7 @@
       justify-content: center;
       align-items: center;
       padding: 20px;
-      z-index: 10;
+      z-index: 20;
       text-align: center;
     }
 
@@ -97,7 +98,7 @@
       background: #00ffcc;
       color: #07090e;
       border: none;
-      padding: 10px;
+      padding: 11px;
       border-radius: 8px;
       font-weight: 900;
       font-size: 13px;
@@ -130,6 +131,12 @@
       gap: 6px;
     }
 
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
     .live-badge {
       background: rgba(0, 200, 83, 0.2);
       color: #00c853;
@@ -140,21 +147,47 @@
       font-weight: bold;
     }
 
+    .lock-btn {
+      background: #1a2332;
+      border: 1px solid #2a384c;
+      color: #ffb703;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 10px;
+      cursor: pointer;
+    }
+
+    /* Asset Selector & Price Row */
     .engine-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 11px;
-      color: #8b949e;
+      gap: 8px;
       margin-bottom: 10px;
       background: #161e2c;
       padding: 6px 10px;
       border-radius: 6px;
+      border: 1px solid #222d42;
     }
 
-    .engine-row span {
+    .asset-dropdown {
+      background: #1a2332;
+      color: #00ffcc;
+      border: 1px solid #2a384c;
+      padding: 5px 8px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 800;
+      outline: none;
+      cursor: pointer;
+      flex: 1;
+    }
+
+    .live-price {
+      font-size: 12px;
+      font-weight: 800;
       color: #ffffff;
-      font-weight: bold;
+      font-family: monospace;
     }
 
     /* Signal Display Box */
@@ -165,6 +198,7 @@
       padding: 12px;
       text-align: center;
       margin-bottom: 10px;
+      position: relative;
     }
 
     .signal-label {
@@ -175,18 +209,33 @@
     }
 
     .signal-main {
-      font-size: 24px;
+      font-size: 26px;
       font-weight: 900;
       margin-bottom: 4px;
+      letter-spacing: 1px;
     }
 
     .signal-main.sell { color: #ff2a4b; }
     .signal-main.buy { color: #00c853; }
+    .signal-main.wait { color: #ffb703; font-size: 18px; padding: 5px 0; }
 
     .signal-score {
       font-size: 11px;
       color: #ffb703;
       font-weight: bold;
+    }
+
+    .timer-pill {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: #0b0f19;
+      border: 1px solid #2a384c;
+      color: #00ffcc;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 4px;
     }
 
     /* Timeframe Selector */
@@ -253,11 +302,7 @@
       font-size: 10px;
       color: #8b949e;
       margin-bottom: 12px;
-      line-height: 1.4;
-    }
-
-    .notes-box div {
-      margin-bottom: 2px;
+      line-height: 1.5;
     }
 
     /* Action Buttons */
@@ -269,13 +314,18 @@
 
     .btn-action {
       flex: 1;
-      padding: 10px;
+      padding: 11px;
       border-radius: 6px;
       border: none;
       font-size: 12px;
       font-weight: 900;
       cursor: pointer;
       text-transform: uppercase;
+      transition: transform 0.1s, opacity 0.2s;
+    }
+
+    .btn-action:active {
+      transform: scale(0.96);
     }
 
     .btn-scan { background: #00ffcc; color: #07090e; }
@@ -326,4 +376,262 @@
     }
 
     input:checked + .slider { background-color: #00ffcc; }
-    input:checked + .slider:before { transform: translateX(
+    input:checked + .slider:before { transform: translateX(16px); }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      background: #00ffcc;
+      color: #07090e;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 800;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+      z-index: 50;
+    }
+    .toast.show { opacity: 1; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Lock Screen Modal -->
+  <div class="lock-screen" id="lockScreen">
+    <div class="bot-logo">🟢</div>
+    <div class="lock-title">Bot Claude V2</div>
+    <div class="lock-subtitle">Geli furaha (Password) si aad u furto bot-ka</div>
+    <input type="password" class="password-input" id="passInput" placeholder="••••" maxlength="4" inputmode="numeric">
+    <button class="unlock-btn" onclick="checkPassword()">Unlock</button>
+    <div class="contact-hint">Password-ku waa: 1234</div>
+  </div>
+
+  <!-- Main App Header -->
+  <div class="header-row">
+    <div class="bot-title">🟢 Bot Claude V2</div>
+    <div class="header-controls">
+      <div class="live-badge">• LIVE</div>
+      <button class="lock-btn" onclick="lockBot()" title="Quful">🔒</button>
+    </div>
+  </div>
+
+  <!-- Asset Selector & Live Price -->
+  <div class="engine-row">
+    <select class="asset-dropdown" id="assetSelect" onchange="updateAsset()">
+      <option value="AED/CNY OTC">AED/CNY OTC</option>
+      <option value="EUR/USD OTC">EUR/USD OTC</option>
+      <option value="GBP/USD OTC">GBP/USD OTC</option>
+      <option value="CAD/JPY OTC">CAD/JPY OTC</option>
+      <option value="AUD/USD OTC">AUD/USD OTC</option>
+      <option value="USD/JPY OTC">USD/JPY OTC</option>
+      <option value="USD/CHF OTC">USD/CHF OTC</option>
+      <option value="EUR/GBP OTC">EUR/GBP OTC</option>
+      <option value="NZD/USD OTC">NZD/USD OTC</option>
+      <option value="AUD/CAD OTC">AUD/CAD OTC</option>
+      <option value="USD/MXN OTC">USD/MXN OTC</option>
+      <option value="EUR/USD">EUR/USD</option>
+      <option value="GBP/USD">GBP/USD</option>
+      <option value="USD/JPY">USD/JPY</option>
+    </select>
+    <span class="live-price" id="livePrice">1.93017</span>
+  </div>
+
+  <!-- Signal Display Box -->
+  <div class="signal-box">
+    <div class="timer-pill" id="timerPill">30s</div>
+    <div class="signal-label" id="signalLabel">SIGNAL · AED/CNY OTC</div>
+    <div class="signal-main sell" id="signalMain">SELL</div>
+    <div class="signal-score" id="signalScore">⚡ 70/100 · GOOD</div>
+  </div>
+
+  <!-- Timeframes -->
+  <div class="timeframes">
+    <div class="tf-btn" data-sec="5" onclick="setTf(this)">5s</div>
+    <div class="tf-btn" data-sec="15" onclick="setTf(this)">15s</div>
+    <div class="tf-btn active" data-sec="30" onclick="setTf(this)">30s</div>
+    <div class="tf-btn" data-sec="60" onclick="setTf(this)">1m</div>
+    <div class="tf-btn" data-sec="300" onclick="setTf(this)">5m</div>
+  </div>
+
+  <!-- Indicators Grid -->
+  <div class="ind-grid">
+    <div class="ind-card">
+      <div class="ind-name">RSI</div>
+      <div class="ind-val" id="rsiVal">39</div>
+    </div>
+    <div class="ind-card">
+      <div class="ind-name">Trend</div>
+      <div class="ind-val" id="trendVal" style="color: #ff2a4b;">Down</div>
+    </div>
+    <div class="ind-card">
+      <div class="ind-name">Pattern</div>
+      <div class="ind-val" id="patternVal">Bear candle</div>
+    </div>
+  </div>
+
+  <!-- Notes Box -->
+  <div class="notes-box" id="notesBox">
+    <div>• EMA 9 below EMA 21, falling</div>
+    <div>• 2 of 3 candles red</div>
+    <div>• RSI 39 bearish zone</div>
+    <div>• Price below EMA 21</div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="action-row">
+    <button class="btn-action btn-scan" onclick="runScan()">• Scan</button>
+    <button class="btn-action btn-reset" onclick="resetBot()">↻ Reset</button>
+  </div>
+  <div class="action-row">
+    <button class="btn-action btn-buy-action" onclick="executeManual('BUY')">▲ BUY</button>
+    <button class="btn-action btn-sell-action" onclick="executeManual('SELL')">▼ SELL</button>
+  </div>
+
+  <!-- Auto Trade -->
+  <div class="auto-trade-row">
+    <span>Auto trade (on strong confirmation)</span>
+    <label class="switch">
+      <input type="checkbox" id="autoTradeToggle" onchange="toggleAutoTrade()">
+      <span class="slider"></span>
+    </label>
+  </div>
+</div>
+
+<div class="toast" id="toastMsg">Signal Updated!</div>
+
+<script>
+  const correctPassword = "1234";
+  let selectedSeconds = 30;
+  let countdownInterval = null;
+  let autoScanInterval = null;
+
+  function showToast(msg) {
+    const toast = document.getElementById('toastMsg');
+    toast.innerText = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2000);
+  }
+
+  function checkPassword() {
+    const val = document.getElementById('passInput').value;
+    if (val === correctPassword) {
+      document.getElementById('lockScreen').style.display = 'none';
+      startTimer(selectedSeconds);
+    } else {
+      alert("Password-ka waa qalad! Geli: 1234");
+    }
+  }
+
+  function lockBot() {
+    document.getElementById('passInput').value = "";
+    document.getElementById('lockScreen').style.display = 'flex';
+  }
+
+  function updateAsset() {
+    const asset = document.getElementById('assetSelect').value;
+    document.getElementById('signalLabel').innerText = `SIGNAL · ${asset}`;
+    runScan();
+  }
+
+  function setTf(element) {
+    document.querySelectorAll('.tf-btn').forEach(btn => btn.classList.remove('active'));
+    element.classList.add('active');
+    selectedSeconds = parseInt(element.getAttribute('data-sec'));
+    startTimer(selectedSeconds);
+  }
+
+  function startTimer(duration) {
+    if (countdownInterval) clearInterval(countdownInterval);
+    let timeLeft = duration;
+    document.getElementById('timerPill').innerText = `${timeLeft}s`;
+
+    countdownInterval = setInterval(() => {
+      timeLeft--;
+      if (timeLeft > 0) {
+        document.getElementById('timerPill').innerText = `${timeLeft}s`;
+      } else {
+        timeLeft = duration;
+        document.getElementById('timerPill').innerText = `${timeLeft}s`;
+        if (document.getElementById('autoTradeToggle').checked) {
+          runScan();
+        }
+      }
+    }, 1000);
+  }
+
+  function runScan() {
+    const asset = document.getElementById('assetSelect').value;
+    const isSell = Math.random() > 0.5;
+    const sigMain = document.getElementById('signalMain');
+    const score = Math.floor(Math.random() * 31) + 65; // 65 to 95
+    const quality = score >= 80 ? "STRONG" : "GOOD";
+    
+    // Update live price slightly
+    const randomPrice = (Math.random() * 0.8 + 1.1).toFixed(5);
+    document.getElementById('livePrice').innerText = randomPrice;
+    document.getElementById('signalLabel').innerText = `SIGNAL · ${asset}`;
+
+    if (isSell) {
+      const rsi = Math.floor(Math.random() * 15) + 30; // 30 - 44
+      sigMain.className = "signal-main sell";
+      sigMain.innerText = "SELL";
+      document.getElementById('signalScore').innerText = `⚡ ${score}/100 · ${quality}`;
+      document.getElementById('trendVal').style.color = "#ff2a4b";
+      document.getElementById('trendVal').innerText = "Down";
+      document.getElementById('patternVal').innerText = "Bear candle";
+      document.getElementById('rsiVal').innerText = rsi;
+      document.getElementById('notesBox').innerHTML = `
+        <div>• EMA 9 below EMA 21, falling</div>
+        <div>• 2 of 3 candles red</div>
+        <div>• RSI ${rsi} bearish zone</div>
+        <div>• Price below EMA 21</div>
+      `;
+    } else {
+      const rsi = Math.floor(Math.random() * 15) + 56; // 56 - 70
+      sigMain.className = "signal-main buy";
+      sigMain.innerText = "BUY";
+      document.getElementById('signalScore').innerText = `⚡ ${score}/100 · ${quality}`;
+      document.getElementById('trendVal').style.color = "#00c853";
+      document.getElementById('trendVal').innerText = "Up";
+      document.getElementById('patternVal').innerText = "Bull candle";
+      document.getElementById('rsiVal').innerText = rsi;
+      document.getElementById('notesBox').innerHTML = `
+        <div>• EMA 9 above EMA 21, rising</div>
+        <div>• 2 of 3 candles green</div>
+        <div>• RSI ${rsi} bullish zone</div>
+        <div>• Price above EMA 21</div>
+      `;
+    }
+
+    startTimer(selectedSeconds);
+  }
+
+  function resetBot() {
+    if (countdownInterval) clearInterval(countdownInterval);
+    document.getElementById('signalMain').innerText = "WAITING...";
+    document.getElementById('signalMain').className = "signal-main wait";
+    document.getElementById('signalScore').innerText = "TAABO SCAN SI AAD U BILOWDO";
+    document.getElementById('timerPill').innerText = "--";
+  }
+
+  function executeManual(type) {
+    const asset = document.getElementById('assetSelect').value;
+    showToast(`${type} Order Placed: ${asset}`);
+  }
+
+  function toggleAutoTrade() {
+    const isChecked = document.getElementById('autoTradeToggle').checked;
+    if (isChecked) {
+      showToast("Auto Scan & Trade ON");
+      runScan();
+    } else {
+      showToast("Auto Trade OFF");
+    }
+  }
+</script>
+
+</body>
+</html>
