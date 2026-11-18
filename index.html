@@ -217,7 +217,13 @@
 
     .signal-main.sell { color: #ff2a4b; }
     .signal-main.buy { color: #00c853; }
-    .signal-main.wait { color: #ffb703; font-size: 18px; padding: 5px 0; }
+    .signal-main.searching { color: #00ffcc; font-size: 16px; animation: pulse 1s infinite; }
+
+    @keyframes pulse {
+      0% { opacity: 0.4; }
+      50% { opacity: 1; }
+      100% { opacity: 0.4; }
+    }
 
     .signal-score {
       font-size: 11px;
@@ -421,30 +427,28 @@
   <!-- Asset Selector & Live Price -->
   <div class="engine-row">
     <select class="asset-dropdown" id="assetSelect" onchange="updateAsset()">
-      <option value="AED/CNY OTC">AED/CNY OTC</option>
       <option value="EUR/USD OTC">EUR/USD OTC</option>
       <option value="GBP/USD OTC">GBP/USD OTC</option>
-      <option value="CAD/JPY OTC">CAD/JPY OTC</option>
       <option value="AUD/USD OTC">AUD/USD OTC</option>
       <option value="USD/JPY OTC">USD/JPY OTC</option>
       <option value="USD/CHF OTC">USD/CHF OTC</option>
+      <option value="CAD/JPY OTC">CAD/JPY OTC</option>
+      <option value="AED/CNY OTC">AED/CNY OTC</option>
       <option value="EUR/GBP OTC">EUR/GBP OTC</option>
       <option value="NZD/USD OTC">NZD/USD OTC</option>
-      <option value="AUD/CAD OTC">AUD/CAD OTC</option>
-      <option value="USD/MXN OTC">USD/MXN OTC</option>
       <option value="EUR/USD">EUR/USD</option>
       <option value="GBP/USD">GBP/USD</option>
       <option value="USD/JPY">USD/JPY</option>
     </select>
-    <span class="live-price" id="livePrice">1.93017</span>
+    <span class="live-price" id="livePrice">1.67509</span>
   </div>
 
   <!-- Signal Display Box -->
   <div class="signal-box">
     <div class="timer-pill" id="timerPill">30s</div>
-    <div class="signal-label" id="signalLabel">SIGNAL · AED/CNY OTC</div>
+    <div class="signal-label" id="signalLabel">SIGNAL · EUR/USD OTC</div>
     <div class="signal-main sell" id="signalMain">SELL</div>
-    <div class="signal-score" id="signalScore">⚡ 70/100 · GOOD</div>
+    <div class="signal-score" id="signalScore">⚡ 69/100 · GOOD</div>
   </div>
 
   <!-- Timeframes -->
@@ -460,7 +464,7 @@
   <div class="ind-grid">
     <div class="ind-card">
       <div class="ind-name">RSI</div>
-      <div class="ind-val" id="rsiVal">39</div>
+      <div class="ind-val" id="rsiVal">37</div>
     </div>
     <div class="ind-card">
       <div class="ind-name">Trend</div>
@@ -476,7 +480,7 @@
   <div class="notes-box" id="notesBox">
     <div>• EMA 9 below EMA 21, falling</div>
     <div>• 2 of 3 candles red</div>
-    <div>• RSI 39 bearish zone</div>
+    <div>• RSI 37 bearish zone</div>
     <div>• Price below EMA 21</div>
   </div>
 
@@ -506,7 +510,7 @@
   const correctPassword = "1234";
   let selectedSeconds = 30;
   let countdownInterval = null;
-  let autoScanInterval = null;
+  let isScanning = false;
 
   function showToast(msg) {
     const toast = document.getElementById('toastMsg');
@@ -563,56 +567,69 @@
   }
 
   function runScan() {
+    if (isScanning) return;
+    isScanning = true;
+
     const asset = document.getElementById('assetSelect').value;
-    const isSell = Math.random() > 0.5;
     const sigMain = document.getElementById('signalMain');
-    const score = Math.floor(Math.random() * 31) + 65; // 65 to 95
-    const quality = score >= 80 ? "STRONG" : "GOOD";
     
-    // Update live price slightly
-    const randomPrice = (Math.random() * 0.8 + 1.1).toFixed(5);
-    document.getElementById('livePrice').innerText = randomPrice;
-    document.getElementById('signalLabel').innerText = `SIGNAL · ${asset}`;
+    // Muuji xaaladda Raadinta (Searching Animation)
+    sigMain.className = "signal-main searching";
+    sigMain.innerText = "SEARCHING...";
+    document.getElementById('signalScore').innerText = "SUUQA LA SOCCOODA...";
+    document.getElementById('signalLabel').innerText = `ANALYZING · ${asset}`;
 
-    if (isSell) {
-      const rsi = Math.floor(Math.random() * 15) + 30; // 30 - 44
-      sigMain.className = "signal-main sell";
-      sigMain.innerText = "SELL";
-      document.getElementById('signalScore').innerText = `⚡ ${score}/100 · ${quality}`;
-      document.getElementById('trendVal').style.color = "#ff2a4b";
-      document.getElementById('trendVal').innerText = "Down";
-      document.getElementById('patternVal').innerText = "Bear candle";
-      document.getElementById('rsiVal').innerText = rsi;
-      document.getElementById('notesBox').innerHTML = `
-        <div>• EMA 9 below EMA 21, falling</div>
-        <div>• 2 of 3 candles red</div>
-        <div>• RSI ${rsi} bearish zone</div>
-        <div>• Price below EMA 21</div>
-      `;
-    } else {
-      const rsi = Math.floor(Math.random() * 15) + 56; // 56 - 70
-      sigMain.className = "signal-main buy";
-      sigMain.innerText = "BUY";
-      document.getElementById('signalScore').innerText = `⚡ ${score}/100 · ${quality}`;
-      document.getElementById('trendVal').style.color = "#00c853";
-      document.getElementById('trendVal').innerText = "Up";
-      document.getElementById('patternVal').innerText = "Bull candle";
-      document.getElementById('rsiVal').innerText = rsi;
-      document.getElementById('notesBox').innerHTML = `
-        <div>• EMA 9 above EMA 21, rising</div>
-        <div>• 2 of 3 candles green</div>
-        <div>• RSI ${rsi} bullish zone</div>
-        <div>• Price above EMA 21</div>
-      `;
-    }
+    // Ku dadaal inay qaadato 3 ilbiriqsi oo raadin ah
+    setTimeout(() => {
+      const isSell = Math.random() > 0.5;
+      const score = Math.floor(Math.random() * 31) + 65; 
+      const quality = score >= 80 ? "STRONG" : "GOOD";
+      
+      const randomPrice = (Math.random() * 0.8 + 1.2).toFixed(5);
+      document.getElementById('livePrice').innerText = randomPrice;
+      document.getElementById('signalLabel').innerText = `SIGNAL · ${asset}`;
 
-    startTimer(selectedSeconds);
+      if (isSell) {
+        const rsi = Math.floor(Math.random() * 15) + 30;
+        sigMain.className = "signal-main sell";
+        sigMain.innerText = "SELL";
+        document.getElementById('signalScore').innerText = `⚡ ${score}/100 · ${quality}`;
+        document.getElementById('trendVal').style.color = "#ff2a4b";
+        document.getElementById('trendVal').innerText = "Down";
+        document.getElementById('patternVal').innerText = "Bear candle";
+        document.getElementById('rsiVal').innerText = rsi;
+        document.getElementById('notesBox').innerHTML = `
+          <div>• EMA 9 below EMA 21, falling</div>
+          <div>• 2 of 3 candles red</div>
+          <div>• RSI ${rsi} bearish zone</div>
+          <div>• Price below EMA 21</div>
+        `;
+      } else {
+        const rsi = Math.floor(Math.random() * 15) + 56;
+        sigMain.className = "signal-main buy";
+        sigMain.innerText = "BUY";
+        document.getElementById('signalScore').innerText = `⚡ ${score}/100 · ${quality}`;
+        document.getElementById('trendVal').style.color = "#00c853";
+        document.getElementById('trendVal').innerText = "Up";
+        document.getElementById('patternVal').innerText = "Bull candle";
+        document.getElementById('rsiVal').innerText = rsi;
+        document.getElementById('notesBox').innerHTML = `
+          <div>• EMA 9 above EMA 21, rising</div>
+          <div>• 2 of 3 candles green</div>
+          <div>• RSI ${rsi} bullish zone</div>
+          <div>• Price above EMA 21</div>
+        `;
+      }
+
+      isScanning = false;
+      startTimer(selectedSeconds);
+    }, 2500); // 2.5 ilbiriqsi oo raadin ah
   }
 
   function resetBot() {
     if (countdownInterval) clearInterval(countdownInterval);
     document.getElementById('signalMain').innerText = "WAITING...";
-    document.getElementById('signalMain').className = "signal-main wait";
+    document.getElementById('signalMain').className = "signal-main";
     document.getElementById('signalScore').innerText = "TAABO SCAN SI AAD U BILOWDO";
     document.getElementById('timerPill').innerText = "--";
   }
