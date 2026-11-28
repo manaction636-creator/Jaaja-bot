@@ -182,7 +182,7 @@
       border: 1px solid #334155;
       padding: 9px;
       border-radius: 8px;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 700;
       outline: none;
       cursor: pointer;
@@ -285,12 +285,12 @@
       margin-bottom: 6px;
     }
 
-    .call { 
-      color: #10b981; 
+    .call {
+      color: #10b981;
       text-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
     }
-    .put { 
-      color: #ef4444; 
+    .put {
+      color: #ef4444;
       text-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
     }
 
@@ -418,19 +418,11 @@
         <div class="control-header">
           <span>Asset</span>
           <div class="market-toggle">
-            <button class="market-btn active" id="btnRegular" onclick="setMarket('Regular')">REG</button>
-            <button class="market-btn" id="btnOTC" onclick="setMarket('OTC')">OTC</button>
+            <button class="market-btn" id="btnRegular" onclick="setMarket('Regular')">REG</button>
+            <button class="market-btn active" id="btnOTC" onclick="setMarket('OTC')">OTC</button>
           </div>
         </div>
-        <select id="assetSelect" onchange="updateInfo()">
-          <option value="EUR/USD">🇪🇺🇺🇸 EUR/USD</option>
-          <option value="GBP/USD">🇬🇧🇺🇸 GBP/USD</option>
-          <option value="USD/JPY">🇺🇸🇯🇵 USD/JPY</option>
-          <option value="AUD/CAD">🇦🇺🇨🇦 AUD/CAD</option>
-          <option value="EUR/JPY">🇪🇺🇯🇵 EUR/JPY</option>
-          <option value="USD/BRL">🇺🇸🇧🇷 USD/BRL</option>
-          <option value="XAU/USD">🪙🇺🇸 GOLD</option>
-        </select>
+        <select id="assetSelect" onchange="updateInfo()"></select>
       </div>
 
       <div class="control-card">
@@ -440,8 +432,8 @@
         <select id="timeSelect" onchange="updateInfo()">
           <option value="5 Seconds">⏱ 5 Seconds</option>
           <option value="15 Seconds">⏱ 15 Seconds</option>
-          <option value="30 Seconds">⏱ 30 Seconds</option>
-          <option value="1 Minute" selected>⏱ 1 Minute</option>
+          <option value="30 Seconds" selected>⏱ 30 Seconds</option>
+          <option value="1 Minute">⏱ 1 Minute</option>
           <option value="5 Minutes">⏱ 5 Minutes</option>
         </select>
       </div>
@@ -451,7 +443,7 @@
     <div class="main-card">
       <h2>Get AI Signal</h2>
       <p>Select your currency pair & timeframe, then tap below to scan live candlesticks</p>
-      
+
       <div class="progress-container" id="progressContainer">
         <div class="progress-bar" id="progressBar"></div>
       </div>
@@ -464,7 +456,7 @@
       <div class="signal-output" id="signalOutput">
         <div class="signal-direction" id="signalDirection">BUY / CALL ⬆</div>
         <div style="font-size: 11px; color: #94a3b8;" id="patternText">Pattern: Bullish Engulfing + RSI Oversold</div>
-        
+
         <div class="signal-details-grid">
           <div class="detail-item">
             <span>ACCURACY</span>
@@ -505,11 +497,11 @@
       </div>
       <div class="info-row">
         <span class="info-label">Selected Pair</span>
-        <span class="info-value" id="displayPair">EUR/USD</span>
+        <span class="info-value" id="displayPair">AUD/USD OTC</span>
       </div>
       <div class="info-row">
         <span class="info-label">Timeframe</span>
-        <span class="info-value" id="displayTime">1 Minute</span>
+        <span class="info-value" id="displayTime">30 Seconds</span>
       </div>
       <div class="info-row">
         <span class="info-label">Strategy Engine</span>
@@ -519,7 +511,78 @@
   </div>
 
   <script>
-    let currentMarket = 'Regular';
+    const otcPairs = [
+      "AUD/USD OTC",
+      "CAD/JPY OTC",
+      "CHF/JPY OTC",
+      "EUR/CHF OTC",
+      "TND/USD OTC",
+      "USD/BDT OTC",
+      "USD/BRL OTC",
+      "USD/CAD OTC",
+      "USD/INR OTC",
+      "USD/THB OTC",
+      "YER/USD OTC",
+      "USD/SGD OTC",
+      "MAD/USD OTC",
+      "ZAR/USD OTC",
+      "EUR/USD OTC",
+      "LBP/USD OTC",
+      "CHF/NOK OTC",
+      "USD/ARS OTC",
+      "USD/IDR OTC",
+      "USD/VND OTC",
+      "AUD/CAD OTC",
+      "USD/CHF OTC",
+      "USD/PKR OTC",
+      "EUR/HUF OTC",
+      "USD/RUB OTC",
+      "USD/DZD OTC",
+      "EUR/TRY OTC",
+      "USD/COP OTC",
+      "USD/EGP OTC",
+      "UAH/USD OTC",
+      "AED/CNY OTC",
+      "USD/CNH OTC",
+      "QAR/CNY OTC",
+      "EUR/JPY OTC",
+      "AUD/CHF OTC",
+      "CAD/CHF OTC",
+      "USD/CLP OTC",
+      "KES/USD OTC",
+      "BHD/CNY OTC",
+      "NGN/USD OTC",
+      "OMR/CNY OTC",
+      "USD/MYR OTC",
+      "USD/MXN OTC",
+      "USD/JPY OTC",
+      "SAR/CNY OTC"
+    ];
+
+    const regularPairs = [
+      "EUR/USD",
+      "GBP/USD",
+      "USD/JPY",
+      "AUD/CAD",
+      "EUR/JPY",
+      "USD/BRL",
+      "GOLD"
+    ];
+
+    let currentMarket = 'OTC';
+
+    function populateAssets() {
+      const select = document.getElementById('assetSelect');
+      const list = currentMarket === 'OTC' ? otcPairs : regularPairs;
+      select.innerHTML = "";
+      list.forEach(pair => {
+        const opt = document.createElement('option');
+        opt.value = pair;
+        opt.textContent = pair;
+        select.appendChild(opt);
+      });
+      updateInfo();
+    }
 
     // Update Live Clock every second
     setInterval(() => {
@@ -538,15 +601,13 @@
       currentMarket = type;
       document.getElementById('btnRegular').classList.toggle('active', type === 'Regular');
       document.getElementById('btnOTC').classList.toggle('active', type === 'OTC');
-      updateInfo();
+      populateAssets();
     }
 
     function updateInfo() {
       const asset = document.getElementById('assetSelect').value;
       const time = document.getElementById('timeSelect').value;
-      const suffix = currentMarket === 'OTC' ? ' (OTC)' : '';
-      
-      document.getElementById('displayPair').innerText = asset + suffix;
+      document.getElementById('displayPair').innerText = asset;
       document.getElementById('displayTime').innerText = time;
     }
 
@@ -615,6 +676,8 @@
       btn.disabled = false;
       btn.innerText = "⚡ ANALYZE & GET SIGNAL ➔";
     }
+
+    populateAssets();
   </script>
 
 </body>
